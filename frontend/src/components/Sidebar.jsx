@@ -4,7 +4,7 @@
  * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
  */
 import { useState } from 'react';
-import { FaHome, FaCog, FaPowerOff, FaUser, FaBars } from 'react-icons/fa';
+import { FaHome, FaUser, FaBook, FaUsers, FaGraduationCap, FaBars } from 'react-icons/fa';
 import { Button } from '@nextui-org/react';
 import Ripples from 'react-ripples';
 
@@ -51,40 +51,24 @@ export default function Sidebar({ role, onSectionChange }) {
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Support' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Support')}>
-                                    <FaPowerOff className="w-5 h-5 mr-3" />
-                                    <span>Support</span>
-                                </div>
-                            </Ripples>
-                        </li>
-                        <li className="mx-2 my-1">
-                            <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Profile' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Profile')}>
-                                    <FaUser className="w-5 h-5 mr-3" />
-                                    <span>Profile</span>
-                                </div>
-                            </Ripples>
-                        </li>
-                        <li className="mx-2 my-1">
-                            <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Materias' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Materias')}>
-                                    <FaUser className="w-5 h-5 mr-3" />
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Subjects' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Subjects')}>
+                                    <FaBook className="w-5 h-5 mr-3" />
                                     <span>Materias</span>
                                 </div>
                             </Ripples>
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Grupos' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Grupos')}>
-                                    <FaUser className="w-5 h-5 mr-3" />
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Groups' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Groups')}>
+                                    <FaUsers className="w-5 h-5 mr-3" />
                                     <span>Grupos</span>
                                 </div>
                             </Ripples>
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Carreras' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Carreras')}>
-                                    <FaUser className="w-5 h-5 mr-3" />
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Careers' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Careers')}>
+                                    <FaGraduationCap className="w-5 h-5 mr-3" />
                                     <span>Carreras</span>
                                 </div>
                             </Ripples>
