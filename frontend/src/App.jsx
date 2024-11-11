@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import LoginCard from "./components/LoginCard";
 import Sidebar from "./components/Sidebar";
+import Users from "./components/Users";
 
 export default function App() {
   const [currentSection, setCurrentSection] = useState('Home');
@@ -15,7 +16,7 @@ export default function App() {
       <Sidebar role={userRole} onSectionChange={handleSectionChange} />
       <div className="flex-grow flex items-center justify-center">
         {currentSection === 'Home' && <LoginCard />}
-        {currentSection === 'Settings' && <div>Settings Component</div>}
+        {currentSection === 'Users' && <Users />}
         {currentSection === 'Support' && <div>Support Component</div>}
         {currentSection === 'Profile' && <div>Profile Component</div>}
       </div>
