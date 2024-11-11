@@ -2,6 +2,9 @@ import { useState } from 'react';
 import LoginCard from "./components/LoginCard";
 import Sidebar from "./components/Sidebar";
 import Users from "./components/Users";
+import MateriasInterface from "./components/CRUDmaterias";
+import GruposInterface from "./components/CrudGrupos";
+import CarreraInterface from "./components/CrudCarrera";
 
 export default function App() {
   const [currentSection, setCurrentSection] = useState('Home');
@@ -19,6 +22,9 @@ export default function App() {
         {currentSection === 'Users' && <Users />}
         {currentSection === 'Support' && <div>Support Component</div>}
         {currentSection === 'Profile' && <div>Profile Component</div>}
+        {currentSection === 'Materias' && <MateriasInterface />}
+        {currentSection === 'Grupos' && <GruposInterface />}
+        {currentSection === 'Carreras' && <CarreraInterface />}
       </div>
     </div>
   );
