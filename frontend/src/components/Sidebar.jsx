@@ -65,6 +65,30 @@ export default function Sidebar({ role, onSectionChange }) {
                                 </div>
                             </Ripples>
                         </li>
+                        <li className="mx-2 my-1">
+                            <Ripples className="w-full rounded-md" during={600}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Materias' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Materias')}>
+                                    <FaUser className="w-5 h-5 mr-3" />
+                                    <span>Materias</span>
+                                </div>
+                            </Ripples>
+                        </li>
+                        <li className="mx-2 my-1">
+                            <Ripples className="w-full rounded-md" during={600}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Grupos' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Grupos')}>
+                                    <FaUser className="w-5 h-5 mr-3" />
+                                    <span>Grupos</span>
+                                </div>
+                            </Ripples>
+                        </li>
+                        <li className="mx-2 my-1">
+                            <Ripples className="w-full rounded-md" during={600}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Carreras' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Carreras')}>
+                                    <FaUser className="w-5 h-5 mr-3" />
+                                    <span>Carreras</span>
+                                </div>
+                            </Ripples>
+                        </li>
                     </ul>
                 </nav>
             </div>
