@@ -2,9 +2,9 @@ import { useState } from 'react';
 import LoginCard from "./components/LoginCard";
 import Sidebar from "./components/Sidebar";
 import Users from "./components/Users";
-import MateriasInterface from "./components/CRUDmaterias";
-import GruposInterface from "./components/CrudGrupos";
-import CarreraInterface from "./components/CrudCarrera";
+import Subjects from "./components/Subjects";
+import Groups from "./components/Groups";
+import Careers from "./components/Careers";
 
 export default function App() {
   const [currentSection, setCurrentSection] = useState('Home');
@@ -20,11 +20,9 @@ export default function App() {
       <div className="flex-grow flex items-center justify-center">
         {currentSection === 'Home' && <LoginCard />}
         {currentSection === 'Users' && <Users />}
-        {currentSection === 'Support' && <div>Support Component</div>}
-        {currentSection === 'Profile' && <div>Profile Component</div>}
-        {currentSection === 'Materias' && <MateriasInterface />}
-        {currentSection === 'Grupos' && <GruposInterface />}
-        {currentSection === 'Carreras' && <CarreraInterface />}
+        {currentSection === 'Subjects' && <Subjects />}
+        {currentSection === 'Groups' && <Groups />}
+        {currentSection === 'Careers' && <Careers />}
       </div>
     </div>
   );
