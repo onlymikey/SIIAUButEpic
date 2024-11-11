@@ -43,9 +43,9 @@ export default function Sidebar({ role, onSectionChange }) {
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Settings' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Settings')}>
-                                    <FaCog className="w-5 h-5 mr-3" />
-                                    <span>Settings</span>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Users' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Users')}>
+                                    <FaUser className="w-5 h-5 mr-3" />
+                                    <span>Usuarios</span>
                                 </div>
                             </Ripples>
                         </li>
