@@ -1,30 +1,31 @@
-import {Button, Card, CardHeader, CardBody, CardFooter, Input, Avatar} from '@nextui-org/react'; 
+import { Button, Card, CardHeader, CardBody, CardFooter, Avatar } from '@nextui-org/react'; 
 import { useState } from 'react';
 import { MdLockOutline, MdOutlineMail } from "react-icons/md";
 import { BsFillPersonFill } from "react-icons/bs";
+import StyledInput from './StyledInput'; // Importa el componente de input reutilizable
 
-export default function LoginCard(){
+export default function LoginCard() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState({email: false, password: false})
+    const [error, setError] = useState({ email: false, password: false });
     const [loading, setLoading] = useState(false);
 
-    function validateEmail(email){
+    function validateEmail(email) {
         return email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g) !== null;
     }
 
-    function validatePassword(password){
+    function validatePassword(password) {
         return password.length >= 6;
     }
 
     const handleChange = (label, value) => {
-        if (label === "email"){
+        if (label === "email") {
             setEmail(value);
-            setError({...error, email: !validateEmail(value)});
+            setError({ ...error, email: !validateEmail(value) });
         }
-        if (label === "password"){
+        if (label === "password") {
             setPassword(value);
-            setError({...error, password: !validatePassword(value)});
+            setError({ ...error, password: !validatePassword(value) });
         }
     }
 
@@ -55,35 +56,35 @@ export default function LoginCard(){
                 size="lg" 
                 className="mb-6"
             />
-        <Card className='w-full max-w-lg p-6 bg-black bg-opacity-40 backdrop-filter backdrop-blur-lg' >
-            <CardHeader className='text-foreground font-sans font-extrabold text-3xl justify-center items-center'>Iniciar sesión</CardHeader>
-            <CardBody className='gap-3 flex flex-col'>
-            <Input 
-                    placeholder="example@gmail.com" 
-                    label="Correo electrónico" 
-                    startContent={<MdOutlineMail className='text-xl' />}
-                    variant='bordered' 
-                    onChange={(event) => handleChange('email', event.target.value)} 
-                    isInvalid={error.email} 
-                    errorMessage="No has escrito un correo bien mamawebo"
-                />
-                <Input 
-                    placeholder="••••••••" 
-                    label="Contraseña"
-                    startContent={<MdLockOutline className='text-xl' />}
-                    type="password" 
-                    variant='bordered' 
-                    onChange={(event) => handleChange('password', event.target.value)} 
-                    isInvalid={error.password} 
-                    errorMessage="No has escrito una contraseña bien mamawebo"
-                />
-            </CardBody>
-            <CardFooter className='flex justify-end'>
-            <Button color='primary' variant='flat' onClick={handleLogin} isLoading={loading} disabled={loading || error.email || error.password}>
+            <Card className='w-full max-w-lg p-6 bg-black bg-opacity-40 backdrop-filter backdrop-blur-lg'>
+                <CardHeader className='text-foreground font-sans font-extrabold text-3xl justify-center items-center'>
                     Iniciar sesión
-                </Button>
-            </CardFooter>
-        </Card>
+                </CardHeader>
+                <CardBody className='gap-3 flex flex-col'>
+                    <StyledInput 
+                        placeholder="example@gmail.com" 
+                        label="Correo electrónico" 
+                        startContent={<MdOutlineMail className='text-xl' />}
+                        isInvalid={error.email} 
+                        errorMessage="No has escrito un correo bien mamawebo"
+                        onChange={(event) => handleChange('email', event.target.value)} 
+                    />
+                    <StyledInput 
+                        placeholder="••••••••" 
+                        label="Contraseña"
+                        startContent={<MdLockOutline className='text-xl' />}
+                        type="password" 
+                        isInvalid={error.password} 
+                        errorMessage="No has escrito una contraseña bien mamawebo"
+                        onChange={(event) => handleChange('password', event.target.value)} 
+                    />
+                </CardBody>
+                <CardFooter className='flex justify-end'>
+                    <Button color='primary' variant='flat' onClick={handleLogin} isLoading={loading} disabled={loading || error.email || error.password}>
+                        Iniciar sesión
+                    </Button>
+                </CardFooter>
+            </Card>
         </div>
-    )
+    );
 }
