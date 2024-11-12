@@ -7,7 +7,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'name', 'father_last_name', 'mother_last_name', 'role', 'career_id', 'password']
+        fields = ['id', 'username', 'birthdate', 'email', 'name', 'father_last_name', 'mother_last_name', 'role', 'career_id', 'password']
 
     # Sobrescribimos create para manejar el hash de la contraseña al crear un usuario
     def create(self, validated_data):

@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'careers',
     'classrooms',
     'groups',
-    'schedules',
     'subjects',
     'corsheaders',
 ]

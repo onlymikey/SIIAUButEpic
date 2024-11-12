@@ -11,6 +11,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('auth_custom', '0001_initial'),
         ('subjects', '0001_initial'),
+        ('classrooms', '0001_initial'),
     ]
 
     operations = [
@@ -18,10 +19,14 @@ class Migration(migrations.Migration):
             name='Group',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=100)),
-                ('quantity_students', models.IntegerField()),
+                ('name', models.CharField(max_length=10, unique=True)),
+                ('classroom', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='classrooms.classroom')),
                 ('subject', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='subjects.subject')),
                 ('teacher', models.ForeignKey(limit_choices_to={'role': 'teacher'}, on_delete=django.db.models.deletion.CASCADE, to='auth_custom.customuser')),
+                ('day', models.CharField(max_length=10)),
+                ('start_at', models.TimeField()),
+                ('end_at', models.TimeField()),
+                ('quantity_students', models.IntegerField()),
             ],
         ),
     ]

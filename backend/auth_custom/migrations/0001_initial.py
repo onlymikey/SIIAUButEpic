@@ -32,6 +32,7 @@ class Migration(migrations.Migration):
                 ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name='active')),
                 ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
                 ('name', models.CharField(max_length=100)),
+                ('birthdate', models.CharField(max_length=15)),
                 ('father_last_name', models.CharField(max_length=100)),
                 ('mother_last_name', models.CharField(max_length=100)),
                 ('role', models.CharField(choices=[('student', 'Student'), ('teacher', 'Teacher'), ('career_admin', 'Career Admin')], default='student', max_length=20)),
