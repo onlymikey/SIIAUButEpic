@@ -1,8 +1,7 @@
-import { Button, Card, CardHeader, CardBody, CardFooter, Avatar } from '@nextui-org/react'; 
+import { Button, Card, CardHeader, CardBody, CardFooter, Avatar, Input } from '@nextui-org/react'; 
 import { useState } from 'react';
 import { MdLockOutline, MdOutlinePerson } from "react-icons/md";
 import { BsFillPersonFill } from "react-icons/bs";
-import StyledInput from './StyledInput'; // Importa el componente de input reutilizable
 import api from '../services/api'; // Importa el cliente HTTP
 import { useNavigate } from 'react-router-dom';
 
@@ -75,16 +74,18 @@ export default function LoginCard() {
                     Iniciar sesión
                 </CardHeader>
                 <CardBody className='gap-3 flex flex-col'>
-                    <StyledInput 
+                    <Input 
                         placeholder="Juan"
+                        variant='bordered'
                         label="Nombre de usuario" 
                         startContent={<MdOutlinePerson className='text-xl' />}
                         isInvalid={error.username} 
                         errorMessage="No has escrito un correo bien mamawebo"
                         onChange={(event) => handleChange('username', event.target.value)} 
                     />
-                    <StyledInput 
+                    <Input 
                         placeholder="••••••••" 
+                        variant='bordered'
                         label="Contraseña"
                         startContent={<MdLockOutline className='text-xl' />}
                         type="password" 

@@ -1,5 +1,4 @@
-import { Button } from '@nextui-org/react';
-import StyledInput from './StyledInput'; // Importa el componente de input reutilizable
+import { Input, Button } from '@nextui-org/react';
 
 export default function Careers() {
     return (
@@ -11,10 +10,10 @@ export default function Careers() {
                 <div className="mb-6">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="col-span-2">
-                            <StyledInput
+                            <Input
                                 placeholder="Ej. 12345"
                                 label="Código de la carrera"
-                                className="bg-transparent text-white"
+                                variant='bordered'
                             />
                         </div>
                         <div className="flex items-end space-x-2 pb-2">
@@ -27,9 +26,9 @@ export default function Careers() {
 
                 {/* Formulario de Información de Carrera */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <StyledInput label="ID" placeholder="12345" className="bg-[#1b263b] text-white" />
-                    <StyledInput label="Nombre Carrera" placeholder="Ej. Ingeniería en Sistemas" className="bg-[#1b263b] text-white" />
-                    <StyledInput label="Número Semestres" placeholder="Ej. 8" className="bg-[#1b263b] text-white" />
+                    <Input isDisabled label="ID" placeholder="12345" variant="bordered" />
+                    <Input isRequired label="Nombre Carrera" placeholder="Ej. Ingeniería en Sistemas" variant="bordered" />
+                    <Input isRequired label="Número Semestres" placeholder="Ej. 8" variant="bordered" />
                 </div>
 
                 {/* Botones de Acción */}
