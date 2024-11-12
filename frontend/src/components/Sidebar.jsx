@@ -38,7 +38,7 @@ export default function Sidebar({ role }) {
                     <ul>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Home' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('dashboard')}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Home' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Dashboard')}>
                                     <FaHome className="w-5 h-5 mr-3" />
                                     <span>Home</span>
                                 </div>
@@ -46,7 +46,7 @@ export default function Sidebar({ role }) {
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Users' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('users')}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Users' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Users')}>
                                     <FaUser className="w-5 h-5 mr-3" />
                                     <span>Usuarios</span>
                                 </div>
@@ -54,7 +54,7 @@ export default function Sidebar({ role }) {
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Subjects' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('subjects')}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Subjects' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Subjects')}>
                                     <FaBook className="w-5 h-5 mr-3" />
                                     <span>Materias</span>
                                 </div>
@@ -62,7 +62,7 @@ export default function Sidebar({ role }) {
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Groups' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('groups')}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Groups' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Groups')}>
                                     <FaUsers className="w-5 h-5 mr-3" />
                                     <span>Grupos</span>
                                 </div>
@@ -70,7 +70,7 @@ export default function Sidebar({ role }) {
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Careers' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('careers')}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Careers' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Careers')}>
                                     <FaGraduationCap className="w-5 h-5 mr-3" />
                                     <span>Carreras</span>
                                 </div>

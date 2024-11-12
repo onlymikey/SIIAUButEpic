@@ -78,7 +78,7 @@ export default function Users() {
             </div>
             <div className="flex items-end space-x-2 pb-2">
               <Button color="primary" variant="flat">Buscar</Button>
-              <Button color="secondary" variant="flat" onClick={handleNew}>Nuevo</Button>
+              <Button color="secondary" variant="flat">Editar</Button>
               <Button color="danger" variant="flat">Baja</Button>
             </div>
           </div>

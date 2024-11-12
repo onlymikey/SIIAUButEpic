@@ -17,7 +17,6 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<LoginCard />} />
-          <Route path="/home" element={<Navigate to="/dashboard" />} />
           <Route path="/*" element={
             <PrivateRoute>
               <div className="flex w-full h-full">
