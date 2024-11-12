@@ -36,7 +36,7 @@ export default function LoginCard() {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await api.post('/login', {
+            const response = await api.post('/login/', {
                 email: email,
                 password: password,
             });
