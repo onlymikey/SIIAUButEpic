@@ -14,6 +14,7 @@ class CustomUser(AbstractUser):
     name = models.CharField(max_length=100)
     father_last_name = models.CharField(max_length=100)
     mother_last_name = models.CharField(max_length=100)
+    birthdate = models.CharField(max_length=15)
     #campo de rol
     role = models.CharField(max_length=20, choices=ROLES, default='student')
 
