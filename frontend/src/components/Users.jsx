@@ -20,7 +20,7 @@ export default function Users() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="col-span-2">
               <StyledInput
-                placeholder="Código de usuario"
+                placeholder="Ej. 12345"
                 label="Código de usuario"
                 className="bg-transparent text-white" // Mantén el fondo transparente y el texto blanco
               />
@@ -35,11 +35,11 @@ export default function Users() {
 
         {/* Formulario de Información de Usuario */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <StyledInput label="ID" placeholder="ID" className="bg-[#1b263b] text-white" />
-          <StyledInput label="Nombre" placeholder="Nombre" className="bg-[#1b263b] text-white" />
-          <StyledInput label="A paterno" placeholder="A paterno" className="bg-[#1b263b] text-white" />
-          <StyledInput label="A materno" placeholder="A materno" className="bg-[#1b263b] text-white" />
-          <StyledInput label="Email" placeholder="Email" type="email" className="bg-[#1b263b] text-white" />
+          <StyledInput label="ID" placeholder="12345" className="bg-[#1b263b] text-white" />
+          <StyledInput label="Nombre" placeholder="Ej. Juan" className="bg-[#1b263b] text-white" />
+          <StyledInput label="A paterno" placeholder="Ej. Perez" className="bg-[#1b263b] text-white" />
+          <StyledInput label="A materno" placeholder="Ej. Robles" className="bg-[#1b263b] text-white" />
+          <StyledInput label="Email" placeholder="juan.perez@example.com" type="email" className="bg-[#1b263b] text-white" />
           <Select
             label="Perfil"
             isRequired
@@ -56,21 +56,21 @@ export default function Users() {
           </Select>
           {role === 'admin' && (
             <>
-              <StyledInput label="Nombre Usuario" placeholder="Nombre Usuario" className="bg-[#1b263b] text-white" />
-              <StyledInput label="Password" placeholder="Password" type="password" className="bg-[#1b263b] text-white" />
+              <StyledInput label="Nombre Usuario" placeholder="juanito" className="bg-[#1b263b] text-white" />
+              <StyledInput label="Password" placeholder="••••••••" type="password" className="bg-[#1b263b] text-white" />
             </>
           )}
           {role === 'alumno' && (
             <>
-              <StyledInput label="Estado" placeholder="Estado" className="bg-[#1b263b] text-white" />
-              <DateInput label="Fecha de nacimiento" placeholder="Fecha de nacimiento" variant="bordered" className="bg-transparent text-white rounded-md" />
-              <StyledInput label="Carrera" placeholder="Carrera" className="bg-[#1b263b] text-white" />
+              <StyledInput label="Estado" placeholder="Ej. Activo" className="bg-[#1b263b] text-white" />
+              <DateInput label="Fecha de nacimiento" placeholder="dd/mm/yyyy" variant="bordered" className="bg-transparent text-white rounded-md" />
+              <StyledInput label="Carrera" placeholder="Ej. Ing. Mecanica" className="bg-[#1b263b] text-white" />
             </>
           )}
           {role === 'maestro' && (
             <>
-              <StyledInput label="Carrera" placeholder="Carrera" className="bg-[#1b263b] text-white" />
-              <StyledInput label="Grado de estudios" placeholder="Grado de estudios" className="bg-[#1b263b] text-white" />
+              <StyledInput label="Carrera" placeholder="Ej. Ing. Quimica" className="bg-[#1b263b] text-white" />
+              <StyledInput label="Grado de estudios" placeholder="Ej. Doctorado" className="bg-[#1b263b] text-white" />
             </>
           )}
         </div>
