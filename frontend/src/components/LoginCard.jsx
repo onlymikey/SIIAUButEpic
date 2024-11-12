@@ -1,20 +1,20 @@
 import { Button, Card, CardHeader, CardBody, CardFooter, Avatar } from '@nextui-org/react'; 
 import { useState } from 'react';
-import { MdLockOutline, MdOutlineMail } from "react-icons/md";
+import { MdLockOutline, MdOutlinePerson } from "react-icons/md";
 import { BsFillPersonFill } from "react-icons/bs";
 import StyledInput from './StyledInput'; // Importa el componente de input reutilizable
 import api from '../services/api'; // Importa el cliente HTTP
 import { useNavigate } from 'react-router-dom';
 
 export default function LoginCard() {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState({ email: false, password: false });
+    const [error, setError] = useState({ username: false, password: false });
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    function validateEmail(email) {
-        return email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g) !== null;
+    function validateUsername(username) {
+        return username.length >= 4;
     }
 
     function validatePassword(password) {
@@ -22,9 +22,9 @@ export default function LoginCard() {
     }
 
     const handleChange = (label, value) => {
-        if (label === "email") {
-            setEmail(value);
-            setError({ ...error, email: !validateEmail(value) });
+        if (label === "username") {
+            setUsername(value);
+            setError({ ...error, username: !validateUsername(value) });
         }
         if (label === "password") {
             setPassword(value);
@@ -36,42 +36,31 @@ export default function LoginCard() {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await api.post('/login/', {
-                email: email,
+            const response = await api.post('/token/', {
+                username: username,
                 password: password,
             });
 
-            if (response.data.status === 'success') {
-                // Guardar el token y el rol en localStorage
-                localStorage.setItem('authToken', response.data.access_token);
-                localStorage.setItem('userRole', response.data.role);
+            if (response.status === 200) {
+                const { access, refresh } = response.data;
+                const now = new Date();
+                const tokenExpirationDate = new Date(now.getTime() + 5 * 60 * 1000); // Asumiendo que el token expira en 5 minutos
 
-                // Obtener los datos del usuario autenticado
-                const userResponse = await api.get('/me', {
-                    headers: {
-                        Authorization: `Bearer ${response.data.access_token}`,
-                    },
-                });
-
-                // Actualizar el contexto con los datos del usuario
-                setUser(userResponse.data);
+                // Guardar el token y la fecha de expiración en localStorage
+                localStorage.setItem('authToken', access);
+                localStorage.setItem('refreshToken', refresh);
+                localStorage.setItem('tokenExpiration', tokenExpirationDate.toISOString());
 
                 // Redirigir al dashboard
                 navigate('/dashboard');
             } else {
-                setError({ email: true, password: true });
+                setError({ username: true, password: true });
             }
         } catch (err) {
-            setError({ email: true, password: true });
+            setError({ username: true, password: true });
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleDebugLogin = () => {
-        localStorage.setItem('authToken', 'debug-token');
-        localStorage.setItem('userRole', 'admin');
-        navigate('/dashboard');
     };
 
     return (
@@ -87,12 +76,12 @@ export default function LoginCard() {
                 </CardHeader>
                 <CardBody className='gap-3 flex flex-col'>
                     <StyledInput 
-                        placeholder="example@gmail.com" 
-                        label="Correo electrónico" 
-                        startContent={<MdOutlineMail className='text-xl' />}
-                        isInvalid={error.email} 
+                        placeholder="Juan"
+                        label="Nombre de usuario" 
+                        startContent={<MdOutlinePerson className='text-xl' />}
+                        isInvalid={error.username} 
                         errorMessage="No has escrito un correo bien mamawebo"
-                        onChange={(event) => handleChange('email', event.target.value)} 
+                        onChange={(event) => handleChange('username', event.target.value)} 
                     />
                     <StyledInput 
                         placeholder="••••••••" 
@@ -105,11 +94,8 @@ export default function LoginCard() {
                     />
                 </CardBody>
                 <CardFooter className='flex justify-end'>
-                    <Button color='primary' variant='flat' onClick={handleSubmit} isLoading={loading} disabled={loading || error.email || error.password}>
+                    <Button color='primary' variant='flat' onClick={handleSubmit} isLoading={loading} disabled={loading || error.username || error.password}>
                         Iniciar sesión
-                    </Button>
-                    <Button color='secondary' variant='flat' onClick={handleDebugLogin}>
-                    Debug Login
                     </Button>
                 </CardFooter>
             </Card>
