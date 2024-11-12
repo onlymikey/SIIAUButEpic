@@ -12,7 +12,7 @@ export default function MateriasInterface() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="col-span-2">
                             <StyledInput
-                                placeholder="Ingrese código de materia"
+                                placeholder="Ej. 12345"
                                 label="Código de materia"
                                 className="bg-transparent text-white"
                             />
@@ -27,11 +27,11 @@ export default function MateriasInterface() {
 
                 {/* Formulario de Información de Materia */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <StyledInput label="ID" placeholder="ID" className="bg-[#1b263b] text-white" />
-                    <StyledInput label="Asignatura" placeholder="Asignatura" className="bg-[#1b263b] text-white" />
-                    <StyledInput label="Créditos" placeholder="Créditos" className="bg-[#1b263b] text-white" />
-                    <StyledInput label="Semestre" placeholder="Semestre" className="bg-[#1b263b] text-white" />
-                    <Select label="Carrera" placeholder="Carrera" variant='bordered' className="bg-transparent text-white rounded-md">
+                    <StyledInput label="ID" placeholder="12345" className="bg-[#1b263b] text-white" />
+                    <StyledInput label="Asignatura" placeholder="Ej. Matemáticas" className="bg-[#1b263b] text-white" />
+                    <StyledInput label="Créditos" placeholder="Ej. 4" className="bg-[#1b263b] text-white" />
+                    <StyledInput label="Semestre" placeholder="Ej. 1" className="bg-[#1b263b] text-white" />
+                    <Select label="Carrera" placeholder="Selecciona una carrera" variant='bordered' className="bg-transparent text-white rounded-md">
                         {/* Agrega las opciones aquí */}
                     </Select>
                 </div>

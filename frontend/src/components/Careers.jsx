@@ -12,7 +12,7 @@ export default function Careers() {
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="col-span-2">
                             <StyledInput
-                                placeholder="Ingrese código de la carrera"
+                                placeholder="Ej. 12345"
                                 label="Código de la carrera"
                                 className="bg-transparent text-white"
                             />
@@ -27,9 +27,9 @@ export default function Careers() {
 
                 {/* Formulario de Información de Carrera */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <StyledInput label="ID" placeholder="ID" className="bg-[#1b263b] text-white" />
-                    <StyledInput label="Nombre Carrera" placeholder="Nombre Carrera" className="bg-[#1b263b] text-white" />
-                    <StyledInput label="Número Semestres" placeholder="Número Semestres" className="bg-[#1b263b] text-white" />
+                    <StyledInput label="ID" placeholder="12345" className="bg-[#1b263b] text-white" />
+                    <StyledInput label="Nombre Carrera" placeholder="Ej. Ingeniería en Sistemas" className="bg-[#1b263b] text-white" />
+                    <StyledInput label="Número Semestres" placeholder="Ej. 8" className="bg-[#1b263b] text-white" />
                 </div>
 
                 {/* Botones de Acción */}

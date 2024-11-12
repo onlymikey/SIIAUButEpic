@@ -1,16 +1,13 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/meMZYVbZzmf
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
 import { useState } from 'react';
-import { FaHome, FaUser, FaBook, FaUsers, FaGraduationCap, FaBars } from 'react-icons/fa';
+import { FaHome, FaUser, FaBook, FaUsers, FaGraduationCap, FaBars, FaPowerOff } from 'react-icons/fa';
 import { Button } from '@nextui-org/react';
 import Ripples from 'react-ripples';
+import { useNavigate } from 'react-router-dom';
 
-export default function Sidebar({ role, onSectionChange }) {
+export default function Sidebar({ role }) {
     const [visible, setVisible] = useState(false);
     const [selectedSection, setSelectedSection] = useState('Home');
+    const navigate = useNavigate();
 
     const toggleSidebar = () => {
         setVisible(!visible);
@@ -18,7 +15,13 @@ export default function Sidebar({ role, onSectionChange }) {
 
     const handleSectionClick = (section) => {
         setSelectedSection(section);
-        onSectionChange(section); // Llama a la función de cambio de sección
+        navigate(`/${section.toLowerCase()}`);
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userRole');
+        navigate('/');
     };
 
     return (
@@ -35,7 +38,7 @@ export default function Sidebar({ role, onSectionChange }) {
                     <ul>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Home' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Home')}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Home' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('dashboard')}>
                                     <FaHome className="w-5 h-5 mr-3" />
                                     <span>Home</span>
                                 </div>
@@ -43,7 +46,7 @@ export default function Sidebar({ role, onSectionChange }) {
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Users' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Users')}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Users' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('users')}>
                                     <FaUser className="w-5 h-5 mr-3" />
                                     <span>Usuarios</span>
                                 </div>
@@ -51,7 +54,7 @@ export default function Sidebar({ role, onSectionChange }) {
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Subjects' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Subjects')}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Subjects' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('subjects')}>
                                     <FaBook className="w-5 h-5 mr-3" />
                                     <span>Materias</span>
                                 </div>
@@ -59,7 +62,7 @@ export default function Sidebar({ role, onSectionChange }) {
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Groups' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Groups')}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Groups' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('groups')}>
                                     <FaUsers className="w-5 h-5 mr-3" />
                                     <span>Grupos</span>
                                 </div>
@@ -67,9 +70,17 @@ export default function Sidebar({ role, onSectionChange }) {
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
-                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Careers' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('Careers')}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'Careers' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('careers')}>
                                     <FaGraduationCap className="w-5 h-5 mr-3" />
                                     <span>Carreras</span>
+                                </div>
+                            </Ripples>
+                        </li>
+                        <li className="mx-2 my-1">
+                            <Ripples className="w-full rounded-md" during={600}>
+                                <div className="flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none hover:bg-gray-700 hover:bg-opacity-50" onClick={handleLogout}>
+                                    <FaPowerOff className="w-5 h-5 mr-3" />
+                                    <span>Cerrar sesión</span>
                                 </div>
                             </Ripples>
                         </li>
