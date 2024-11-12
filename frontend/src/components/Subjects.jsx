@@ -1,5 +1,4 @@
-import { Button, Select, SelectItem } from '@nextui-org/react';
-import StyledInput from './StyledInput'; // Importa el componente de input reutilizable
+import { Button, Select, Input, SelectItem } from '@nextui-org/react';
 
 export default function MateriasInterface() {
     return (
@@ -11,10 +10,10 @@ export default function MateriasInterface() {
                 <div className="mb-6">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="col-span-2">
-                            <StyledInput
+                            <Input
                                 placeholder="Ej. 12345"
                                 label="Código de materia"
-                                className="bg-transparent text-white"
+                                variant='bordered'
                             />
                         </div>
                         <div className="flex items-end space-x-2 pb-2">
@@ -27,11 +26,11 @@ export default function MateriasInterface() {
 
                 {/* Formulario de Información de Materia */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <StyledInput label="ID" placeholder="12345" className="bg-[#1b263b] text-white" />
-                    <StyledInput label="Asignatura" placeholder="Ej. Matemáticas" className="bg-[#1b263b] text-white" />
-                    <StyledInput label="Créditos" placeholder="Ej. 4" className="bg-[#1b263b] text-white" />
-                    <StyledInput label="Semestre" placeholder="Ej. 1" className="bg-[#1b263b] text-white" />
-                    <Select label="Carrera" placeholder="Selecciona una carrera" variant='bordered' className="bg-transparent text-white rounded-md">
+                    <Input isDisabled label="ID" placeholder="12345" variant="bordered" />
+                    <Input isRequired label="Asignatura" placeholder="Ej. Matemáticas" variant="bordered" />
+                    <Input isRequired label="Créditos" placeholder="Ej. 4" variant="bordered" />
+                    <Input isRequired label="Semestre" placeholder="Ej. 1" variant="bordered" />
+                    <Select isRequired label="Carrera" placeholder="Selecciona una carrera" variant='bordered' className="bg-transparent text-white rounded-md">
                         {/* Agrega las opciones aquí */}
                     </Select>
                 </div>

@@ -1,5 +1,4 @@
-import { Button, Select, SelectItem, DateInput } from '@nextui-org/react';
-import StyledInput from './StyledInput'; // Importa el componente de input reutilizable
+import { Input, Button, Select, SelectItem, DateInput } from '@nextui-org/react';
 
 export default function Groups() {
     return (
@@ -11,10 +10,10 @@ export default function Groups() {
                 <div className="mb-6">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div className="col-span-2">
-                            <StyledInput
+                            <Input
                                 placeholder="Ej. 12345"
                                 label="Código de grupo"
-                                className="bg-transparent text-white"
+                                variant='bordered'
                             />
                         </div>
                         <div className="flex items-end space-x-2 pb-2">
@@ -27,25 +26,25 @@ export default function Groups() {
 
                 {/* Formulario de Información de Grupo */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <StyledInput label="ID" placeholder="12345" className="bg-[#1b263b] text-white" />
-                    <Select label="Maestro" placeholder="Selecciona un maestro" variant='bordered' className="bg-transparent text-white rounded-md">
+                    <Input isDisabled label="ID" placeholder="12345" variant="bordered" />
+                    <Select isRequired label="Maestro" placeholder="Selecciona un maestro" variant='bordered' className="bg-transparent text-white rounded-md">
                         {/* Agrega las opciones aquí */}
                     </Select>
-                    <StyledInput label="Nombre de Grupo" placeholder="Ej. Grupo A" className="bg-[#1b263b] text-white" />
-                    <Select label="Salón" placeholder="Selecciona un salón" variant='bordered' className="bg-transparent text-white rounded-md">
+                    <Input isRequired label="Nombre de Grupo" placeholder="Ej. Grupo A" variant="bordered" />
+                    <Select isRequired label="Salón" placeholder="Selecciona un salón" variant='bordered' className="bg-transparent text-white rounded-md">
                         {/* Agrega las opciones aquí */}
                     </Select>
-                    <DateInput label="Fecha" placeholder="dd/mm/yyyy" variant="bordered" className="bg-transparent text-white rounded-md" />
-                    <Select label="Semestre" placeholder="Selecciona un semestre" variant='bordered' className="bg-transparent text-white rounded-md">
+                    <DateInput isRequired label="Fecha" placeholder="dd/mm/yyyy" variant="bordered" className="bg-transparent text-white rounded-md" />
+                    <Select isRequired label="Semestre" placeholder="Selecciona un semestre" variant='bordered' className="bg-transparent text-white rounded-md">
                         {/* Agrega las opciones aquí */}
                     </Select>
-                    <Select label="Carrera" placeholder="Selecciona una carrera" variant='bordered' className="bg-transparent text-white rounded-md">
+                    <Select isRequired label="Carrera" placeholder="Selecciona una carrera" variant='bordered' className="bg-transparent text-white rounded-md">
                         {/* Agrega las opciones aquí */}
                     </Select>
-                    <Select label="Max Num de Alumnos" placeholder="Selecciona el máximo número de alumnos" variant='bordered' className="bg-transparent text-white rounded-md">
+                    <Select isRequired label="Max Num de Alumnos" placeholder="Selecciona el máximo número de alumnos" variant='bordered' className="bg-transparent text-white rounded-md">
                         {/* Agrega las opciones aquí */}
                     </Select>
-                    <Select label="Materia" placeholder="Selecciona una materia" variant='bordered' className="bg-transparent text-white rounded-md">
+                    <Select isRequired label="Materia" placeholder="Selecciona una materia" variant='bordered' className="bg-transparent text-white rounded-md">
                         {/* Agrega las opciones aquí */}
                     </Select>
                 </div>

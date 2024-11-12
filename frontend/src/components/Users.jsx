@@ -1,13 +1,60 @@
 import React, { useState } from 'react';
-import { Button, Select, SelectItem, DateInput } from '@nextui-org/react'; // Importa los componentes necesarios de NextUI
-import StyledInput from './StyledInput'; // Importa el componente de input reutilizable
+import { Button, Select, Input, SelectItem, DateInput } from '@nextui-org/react'; // Importa los componentes necesarios de NextUI
+import { CalendarDate } from '@internationalized/date'; // Importa CalendarDate
 import { roles } from '../data/roles'; // Importa los roles predefinidos
 
 export default function Users() {
   const [role, setRole] = useState('admin');
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    id: '',
+    nombre: '',
+    aPaterno: '',
+    aMaterno: '',
+    email: '',
+    perfil: '',
+    nombreUsuario: '',
+    password: '',
+    estado: '',
+    fechaNacimiento: new CalendarDate(2000, 1, 1), // Inicializa con una fecha válida
+    carrera: '',
+    gradoEstudios: ''
+  });
 
   const handleRoleChange = (value) => {
     setRole(value);
+    setFormData({ ...formData, perfil: value });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleDateChange = (value) => {
+    setFormData({ ...formData, fechaNacimiento: value }); // Asegúrate de que sea un valor compatible con DateInput
+  };
+
+  const handleNew = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setFormData({
+      id: '',
+      nombre: '',
+      aPaterno: '',
+      aMaterno: '',
+      email: '',
+      perfil: '',
+      nombreUsuario: '',
+      password: '',
+      estado: '',
+      fechaNacimiento: new CalendarDate(2000, 1, 1), // Restablece a una fecha válida
+      carrera: '',
+      gradoEstudios: ''
+    });
   };
 
   return (
@@ -19,15 +66,19 @@ export default function Users() {
         <div className="mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="col-span-2">
-              <StyledInput
+              <Input
                 placeholder="Ej. 12345"
+                variant='bordered'
                 label="Código de usuario"
-                className="bg-transparent text-white" // Mantén el fondo transparente y el texto blanco
+                className="bg-transparent text-white"
+                name="id"
+                value={formData.id}
+                onChange={handleInputChange}
               />
             </div>
-            <div className="flex items-end space-x-2 pb-2"> {/* Asegurar que los botones estén alineados */}
+            <div className="flex items-end space-x-2 pb-2">
               <Button color="primary" variant="flat">Buscar</Button>
-              <Button color="secondary" variant="flat">Editar</Button>
+              <Button color="secondary" variant="flat" onClick={handleNew}>Nuevo</Button>
               <Button color="danger" variant="flat">Baja</Button>
             </div>
           </div>
@@ -35,11 +86,11 @@ export default function Users() {
 
         {/* Formulario de Información de Usuario */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <StyledInput label="ID" placeholder="12345" className="bg-[#1b263b] text-white" />
-          <StyledInput label="Nombre" placeholder="Ej. Juan" className="bg-[#1b263b] text-white" />
-          <StyledInput label="A paterno" placeholder="Ej. Perez" className="bg-[#1b263b] text-white" />
-          <StyledInput label="A materno" placeholder="Ej. Robles" className="bg-[#1b263b] text-white" />
-          <StyledInput label="Email" placeholder="juan.perez@example.com" type="email" className="bg-[#1b263b] text-white" />
+          <Input isDisabled label="ID" placeholder="12345" variant="bordered" value={formData.id} />
+          <Input isRequired label="Nombre" placeholder="Ej. Juan" variant="bordered" isDisabled={!isEditing} name="nombre" value={formData.nombre} onChange={handleInputChange} />
+          <Input isRequired label="A paterno" placeholder="Ej. Perez" variant="bordered" isDisabled={!isEditing} name="aPaterno" value={formData.aPaterno} onChange={handleInputChange} />
+          <Input isRequired label="A materno" placeholder="Ej. Robles" variant="bordered" isDisabled={!isEditing} name="aMaterno" value={formData.aMaterno} onChange={handleInputChange} />
+          <Input isRequired label="Email" placeholder="juan.perez@example.com" type="email" variant="bordered" isDisabled={!isEditing} name="email" value={formData.email} onChange={handleInputChange} />
           <Select
             label="Perfil"
             isRequired
@@ -47,6 +98,9 @@ export default function Users() {
             onChange={(e) => handleRoleChange(e.target.value)}
             variant="bordered"
             className="bg-transparent text-white rounded-md"
+            isDisabled={!isEditing}
+            name="perfil"
+            value={formData.perfil}
           >
             {roles.map((role) => (
               <SelectItem key={role.key} value={role.key}>
@@ -56,32 +110,32 @@ export default function Users() {
           </Select>
           {role === 'admin' && (
             <>
-              <StyledInput label="Nombre Usuario" placeholder="juanito" className="bg-[#1b263b] text-white" />
-              <StyledInput label="Password" placeholder="••••••••" type="password" className="bg-[#1b263b] text-white" />
+              <Input isRequired label="Nombre Usuario" placeholder="juanito" variant="bordered" isDisabled={!isEditing} name="nombreUsuario" value={formData.nombreUsuario} onChange={handleInputChange} />
+              <Input isRequired label="Password" placeholder="••••••••" type="password" variant="bordered" isDisabled={!isEditing} name="password" value={formData.password} onChange={handleInputChange} />
             </>
           )}
           {role === 'alumno' && (
             <>
-              <StyledInput label="Estado" placeholder="Ej. Activo" className="bg-[#1b263b] text-white" />
-              <DateInput label="Fecha de nacimiento" placeholder="dd/mm/yyyy" variant="bordered" className="bg-transparent text-white rounded-md" />
-              <StyledInput label="Carrera" placeholder="Ej. Ing. Mecanica" className="bg-[#1b263b] text-white" />
+              <Input isRequired label="Estado" placeholder="Ej. Activo" variant="bordered" isDisabled={!isEditing} name="estado" value={formData.estado} onChange={handleInputChange} />
+              <DateInput isRequired label="Fecha de nacimiento" placeholderValue={new CalendarDate(2000, 1, 1)} variant="bordered" className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleDateChange} />
+              <Input isRequired label="Carrera" placeholder="Ej. Ing. Mecanica" variant="bordered" isDisabled={!isEditing} name="carrera" value={formData.carrera} onChange={handleInputChange} />
             </>
           )}
           {role === 'maestro' && (
             <>
-              <StyledInput label="Carrera" placeholder="Ej. Ing. Quimica" className="bg-[#1b263b] text-white" />
-              <StyledInput label="Grado de estudios" placeholder="Ej. Doctorado" className="bg-[#1b263b] text-white" />
+              <Input isRequired label="Carrera" placeholder="Ej. Ing. Quimica" variant="bordered" isDisabled={!isEditing} name="carrera" value={formData.carrera} onChange={handleInputChange} />
+              <Input isRequired label="Grado de estudios" placeholder="Ej. Doctorado" variant="bordered" isDisabled={!isEditing} name="gradoEstudios" value={formData.gradoEstudios} onChange={handleInputChange} />
             </>
           )}
         </div>
 
         {/* Botones de Acción */}
         <div className="flex justify-around mt-6">
-          <Button color="success" variant="flat">Nuevo</Button>
-          <Button color="primary" variant="flat">Guardar</Button>
-          <Button color="default" variant="flat">Cancelar</Button>
+          <Button color="success" variant="flat" onClick={handleNew}>Nuevo</Button>
+          <Button color="primary" variant="flat" isDisabled={!isEditing}>Guardar</Button>
+          <Button color="default" variant="flat" isDisabled={!isEditing} onClick={handleCancel}>Cancelar</Button>
         </div>
       </div>
     </div>
   );
-};
+}
