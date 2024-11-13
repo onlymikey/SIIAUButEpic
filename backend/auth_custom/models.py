@@ -15,8 +15,10 @@ class CustomUser(AbstractUser):
     father_last_name = models.CharField(max_length=100)
     mother_last_name = models.CharField(max_length=100)
     birthdate = models.CharField(max_length=15)
+    email = models.EmailField(max_length=100, unique=True)
     #campo de rol
     role = models.CharField(max_length=20, choices=ROLES, default='student')
+    #que no cree a la misma persona con si legal name
 
     # Solucionar conflicto con auth.User
     groups = models.ManyToManyField('auth.Group', related_name='customuser_groups', blank=True)
