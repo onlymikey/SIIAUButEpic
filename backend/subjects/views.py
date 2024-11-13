@@ -16,7 +16,7 @@ class SubjectDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SubjectSerializer
 
 # Vista para obtener el próximo ID de la tabla subjects_subject
-class UserNextIdView(APIView):
+class SubjectNextIdView(APIView):
     def get(self, request, *args, **kwargs):
         next_id = self.get_next_auto_increment_id('subjects_subject')
         return Response({'next_id': next_id})

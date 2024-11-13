@@ -16,7 +16,7 @@ class ClassroomDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ClassroomSerializer
 
 # Vista para obtener el siguiente ID que se usará en la tabla classroom.
-class UserNextIdView(APIView):
+class ClassroomNextIdView(APIView):
     def get(self, request, *args, **kwargs):
         next_id = self.get_next_auto_increment_id('classrooms_classroom')
         return Response({'next_id': next_id})
