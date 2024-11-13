@@ -16,7 +16,7 @@ class GroupDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GroupSerializer
 
 # Vista para obtener el próximo ID de la tabla groups_group
-class UserNextIdView(APIView):
+class GroupNextIdView(APIView):
     def get(self, request, *args, **kwargs):
         next_id = self.get_next_auto_increment_id('groups_group')
         return Response({'next_id': next_id})
