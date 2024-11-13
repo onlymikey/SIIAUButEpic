@@ -1,5 +1,5 @@
 export const roles = [
-    { key: "admin", label: "Admin" },
-    { key: "alumno", label: "Alumno" },
-    { key: "maestro", label: "Maestro" }
+    { key: "career_admin", label: "Admin" },
+    { key: "student", label: "Alumno" },
+    { key: "teacher", label: "Maestro" }
   ];
