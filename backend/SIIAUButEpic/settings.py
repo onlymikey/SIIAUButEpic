@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'groups',
     'subjects',
     'corsheaders',
+    'enrollments',
 ]
 
 AUTH_USER_MODEL = 'auth_custom.CustomUser'
