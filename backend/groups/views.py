@@ -1,9 +1,10 @@
 from rest_framework import generics
-from .models import Group
-from .serializers import GroupSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import connection
+from .serializers import GroupSerializer
+from .models import Group
+
 
 # Vista para listar todos los grupos
 class GroupListCreateView(generics.ListCreateAPIView):
