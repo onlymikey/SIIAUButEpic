@@ -1,61 +1,60 @@
 import React from "react";
-import { Card, Select, Table } from "@nextui-org/react";
 
 const AcademicOffer = () => {
   return (
-    <div className="p-10 max-w-6xl mx-auto bg-black bg-opacity-40 backdrop-filter backdrop-blur-lg rounded-lg w-full ">
+    <div className="p-10 max-w-6xl mx-auto bg-gray-900 bg-opacity-90 backdrop-blur-lg rounded-lg">
       {/* Título */}
-      <h1 className="text-foreground font-sans font-extrabold text-3xl justify-center items-center text-center mb-6">Oferta Académica</h1>
+      <h1 className="text-white font-bold text-4xl text-center mb-8">
+        Oferta Académica
+      </h1>
 
       {/* Select de Carrera */}
-      <Card
-        style={{
-          backgroundColor: "#1B1F3A",
-          color: "#FFFFFF",
-          marginBottom: "20px",
-          padding: "10px",
-        }}
-      >
-        <Select label="Carrera" placeholder="Selecciona una carrera" variant='bordered' className="bg-transparent text-white rounded-md">
-                        {/* Carreras */}
-                    </Select>
-      </Card>
-
-        {/* Tabla */}
-        <Card style={{ backgroundColor: "#1B1F3A", color: "#FFFFFF" }}>
-        <table
-            style={{
-            width: "100%",
-            borderCollapse: "collapse",
-            textAlign: "center",
-            color: "white",
-            }}
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+        <label className="block text-white font-medium text-lg mb-2">
+          Carrera
+        </label>
+        <select
+          className="w-full bg-gray-700 text-white p-3 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          placeholder="Selecciona una carrera"
         >
-            <thead>
-            <tr style={{ borderBottom: "1px solid white" }}>
-                <th style={{ padding: "10px" }}>CLAVE</th>
-                <th>MATERIA</th>
-                <th>CUPOS</th>
-                <th>PROFESOR</th>
-                <th>HORARIO</th>
-                <th>AULA</th>
-            </tr>
-            </thead>
-            <tbody>
-            {[...Array(4)].map((_, index) => (
-                <tr key={index} style={{ borderBottom: "1px solid white" }}>
-                <td style={{ padding: "10px" }}>Text</td>
-                <td>Text</td>
-                <td>Text</td>
-                <td>Text</td>
-                <td>Text</td>
-                <td>Text</td>
-                </tr>
-            ))}
-            </tbody>
-        </table>
-        </Card>
+          {/* Opciones de carreras */}
+          <option value="">Selecciona una carrera</option>
+          <option value="carrera1">Ingeniería en Sistemas</option>
+          <option value="carrera2">Licenciatura en Administración</option>
+          <option value="carrera3">Medicina</option>
+        </select>
+      </div>
 
+      {/* Tabla */}
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <table className="w-full table-auto text-white border-collapse">
+          <thead>
+            <tr className="border-b border-gray-600">
+              <th className="py-3 px-4">CLAVE</th>
+              <th className="py-3 px-4">MATERIA</th>
+              <th className="py-3 px-4">CUPOS</th>
+              <th className="py-3 px-4">PROFESOR</th>
+              <th className="py-3 px-4">HORARIO</th>
+              <th className="py-3 px-4">AULA</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[...Array(4)].map((_, index) => (
+              <tr
+                key={index}
+                className="border-b border-gray-600 text-center hover:bg-gray-700"
+              >
+                <td className="py-2 px-4">Text</td>
+                <td className="py-2 px-4">Text</td>
+                <td className="py-2 px-4">Text</td>
+                <td className="py-2 px-4">Text</td>
+                <td className="py-2 px-4">Text</td>
+                <td className="py-2 px-4">Text</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
