@@ -76,30 +76,31 @@ const DashboardStudents = () => {
       {/* Botones */}
       <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px" }}>
         {[
-          { label: "Registrar materias", icon: <MdCalendarMonth /> },
-          { label: "Oferta Academica", icon: <MdAccountBalance />},
-          { label: "Kardex", icon: <MdInsertDriveFile />},
-          { label: "Cerrar Sesion", icon: <MdLogin />, color: "error" },
+          { label: "Registrar materias", icon: <MdCalendarMonth />, color: "#007bff" }, 
+          { label: "Oferta Académica", icon: <MdAccountBalance />, color: "#28a745", path: "/AcademicsPrograms" },
+          { label: "Kardex", icon: <MdInsertDriveFile />, color: "#ffc107" }, 
+          { label: "Cerrar Sesión", icon: <MdLogin />, color: "#dc3545" }, 
         ].map((button) => (
+          <Link to={button.path || "#"} key={button.label} style={{ textDecoration: 'none' }}>
             <Button
-            key={button.label}
-            variant="flat"
-            size="lg"
-            style={{
+              variant="flat"
+              size="lg"
+              style={{
                 backgroundColor: "#1B1F3A",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                color: button.color === "error" ? "#FF4D4D" : "white",
+                color: button.color,
                 padding: "50px",
-                width: "20%",
-            }}
+                width: "100%",
+              }}
             >
-            <div style={{ fontSize: "3rem", marginBottom: "1px", color: "white" }}>
+              <div style={{ fontSize: "3rem", marginBottom: "1px", color: "white" }}>
                 {button.icon}
-            </div>
-            {button.label}
+              </div>
+              {button.label}
             </Button>
+          </Link>
         ))}
       </div>
     </div>
