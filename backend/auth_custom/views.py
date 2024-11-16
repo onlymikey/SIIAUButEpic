@@ -38,9 +38,14 @@ class CustomUserLoginView(APIView):
         if user is not None:
             # Si el usuario es válido, generar tokens JWT
             refresh = RefreshToken.for_user(user)
+
+            # Serializar la información del ususario
+            user_data = CustomUserSerializer(user).data
+
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
+                'user': user_data,
             })
         else:
             return Response({"detail": "Credenciales incorrectas"}, status=status.HTTP_401_UNAUTHORIZED)

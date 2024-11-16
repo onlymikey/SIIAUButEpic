@@ -16,7 +16,7 @@ class CustomUser(AbstractUser):
     name = models.CharField(max_length=100)
     father_last_name = models.CharField(max_length=100)
     mother_last_name = models.CharField(max_length=100)
-    birthdate = models.CharField(max_length=15)
+    birthdate = models.CharField(max_length=15, blank=True, null=True)
     email = models.EmailField(max_length=100, unique=True)
     
     # Campo de nivel de estudios
