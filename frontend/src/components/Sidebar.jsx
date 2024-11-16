@@ -78,6 +78,22 @@ export default function Sidebar({ role }) {
                         </li>
                         <li className="mx-2 my-1">
                             <Ripples className="w-full rounded-md" during={600}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'DashboardStudents' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('DashboardStudents')}>
+                                    <FaGraduationCap className="w-5 h-5 mr-3" />
+                                    <span>DashStudents</span>
+                                </div>
+                            </Ripples>
+                        </li>
+                        <li className="mx-2 my-1">
+                            <Ripples className="w-full rounded-md" during={600}>
+                                <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'AcademicsPrograms' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('AcademicsPrograms')}>
+                                    <FaGraduationCap className="w-5 h-5 mr-3" />
+                                    <span>Oferta Academica</span>
+                                </div>
+                            </Ripples>
+                        </li>
+                        <li className="mx-2 my-1">
+                            <Ripples className="w-full rounded-md" during={600}>
                                 <div className="flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none hover:bg-gray-700 hover:bg-opacity-50" onClick={handleLogout}>
                                     <FaPowerOff className="w-5 h-5 mr-3" />
                                     <span>Cerrar sesión</span>
