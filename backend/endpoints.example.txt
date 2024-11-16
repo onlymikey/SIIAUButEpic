@@ -1,0 +1,214 @@
+EL SIGUIENTE TXT MUESTRA DEBEN SER LOS BODYS DEL REQUEST, LOS CUALES SON JSON,
+Y QUE ES LO QUE DEVUELVEN AL REALIZAR LA SOLICITUD (tambien puede anexar ejemplos de respuestas de error).
+
+Organizado por models(despues de la url base api/):
+*****************************************************************
+*********                                       *****************
+*********                USERS                  *****************
+*********                                       *****************
+*****************************************************************
+
+**********************endpoint: users/*********************************************************************
+método: POST
+descripción: crea un usuario.
+body JSON:
+{
+    "career" : 1, (only obligatory for students)
+    "name" : "Lola",
+    "username" : "LALA",
+    "email" : "examp@examp.com",
+    "password" : "holaMundo8Cara",
+    "father_last_name" : "Palma",
+    "mother_last_name" : "Lopez",
+    "birthdate" : "10-10-2024", (only obligatory for students)
+    "studies_degree" : "Doctorado", (only obligatory for teachers)
+    "role" : "teacher"
+}
+respuesta para este request:
+{
+    "id": 1,
+    "username": "a",
+    "birthdate": "10/10/2024",
+    "email": "b@examp.com",
+    "name": "Lola",
+    "studies_degree": "Doctorado",
+    "father_last_name": "Palma",
+    "mother_last_name": "Lopez",
+    "role": "student",
+    "career": 1
+}
+status:201
+
+
+
+
+***********************************************endpoint: users/*******************************************
+método: GET
+descripción: Obtiene un json que lista TODOS los usuarios.
+body JSON: empty
+respuesta para este request:
+{
+    "id": 1,
+    "username": "a",
+    "birthdate": "10/10/2024",
+    "email": "b@examp.com",
+    "name": "Lola",
+    "studies_degree": "Doctorado",
+    "father_last_name": "Palma",
+    "mother_last_name": "Lopez",
+    "role": "student",
+    "career": 1
+},
+{
+    "id": 2,
+    "username": "a",
+    "birthdate": "10/10/2024",
+    "email": "b@examp.com",
+    "name": "Lola",
+    "studies_degree": "Doctorado",
+    "father_last_name": "Palma",
+    "mother_last_name": "Lopez",
+    "role": "student",
+    "career": 1
+},
+{
+    "id": 3,
+    "username": "a",
+    "birthdate": "10/10/2024",
+    "email": "b@examp.com",
+    "name": "Lola",
+    "studies_degree": "Doctorado",
+    "father_last_name": "Palma",
+    "mother_last_name": "Lopez",
+    "role": "student",
+    "career": 1
+},
+...
+status:200
+(si no hay usuarios el status es el mismo; el json estara vacio).
+
+
+
+
+*********************************************users/<int:PK>/********************************************************
+método: GET
+descripción: Obtiene un usuario en especifico.
+body JSON: empty
+respuesta para este request:
+{
+    "id": 1,
+    "username": "student01",
+    "birthdate": "2000-01-01",
+    "email": "student01@example.com",
+    "name": "John",
+    "studies_degree": "Bachelor",
+    "father_last_name": "Doe",
+    "mother_last_name": "Smith",
+    "role": "student",
+    "career": 2
+}
+status:200
+respuesta de error:
+{
+    "detail": "Not found."
+}
+descripción: no se ha encontrado al user con ese id
+status:404
+
+
+
+
+
+*********************************************users/<int:PK>/********************************************************
+método: PUT
+descripción: Actualiza un usuario.
+body JSON:
+{
+    "username": "updated_user",
+    "birthdate": "1999-05-10",
+    "email": "updated_user@example.com",
+    "name": "Updated Name",
+    "studies_degree": "Master",
+    "father_last_name": "Updated Last Name",
+    "mother_last_name": "Smith",
+    "role": "teacher",
+    "career": 3
+}
+respuesta para este request:
+{
+    "id": 1,
+    "username": "updated_user",
+    "birthdate": "1999-05-10",
+    "email": "updated_user@example.com",
+    "name": "Updated Name",
+    "studies_degree": "Master",
+    "father_last_name": "Updated Last Name",
+    "mother_last_name": "Smith",
+    "role": "teacher",
+    "career": 3
+}
+status:200
+
+
+
+
+************************************************users/<int:PK>/**************************************************************
+método: DELETE
+descripción: Elimina un usuario.
+body JSON: empty
+respuesta para este request: vacio
+status:204
+respuesta de error:
+{
+    "detail": "Not found."
+}
+descripción: no se ha encontrado un user con ese id
+status:404
+
+
+
+
+*************************************************users/next-id/***************************************************************
+método: GET
+descripción: Obtiene el id que sera asignado al siguiente user a registrar.
+body JSON: empty
+respuesta para este request:
+{
+    "next_id" : 1
+}
+status:200
+
+
+
+
+
+**************************************************login/*******************************************************************
+método: POST
+descripción: Se logea en el sistema.
+body JSON:
+{
+    "username" : "Lol",
+    "password" : "holaMundo8Cara"
+}
+respuesta para este request:
+{
+    "refresh": <refresh_token>,
+    "access": "<acces_token>"
+}
+status:200
+respuesta de error:
+{
+    "detail": "Credenciales incorrectas"
+}
+descripción: Alguno de los datos son incorrectos.
+status:401
+
+
+
+
+
+*****************************************************************
+*********                                       *****************
+*********                CAREERS                *****************
+*********                                       *****************
+*****************************************************************

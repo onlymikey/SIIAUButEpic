@@ -10,7 +10,7 @@ class CustomUser(AbstractUser):
         ('career_admin', 'Career Admin'),
     )
     # Relación con la carrera (puede ser nulo en caso de administrador)
-    career_id = models.ForeignKey(Career, on_delete=models.CASCADE, null=True, blank=True)
+    career = models.ForeignKey(Career, on_delete=models.CASCADE, null=True, blank=True)
     
     # Campos obligatorios
     name = models.CharField(max_length=100)

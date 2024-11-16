@@ -8,7 +8,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'birthdate', 'email', 'name', 'studies_degree', 'father_last_name', 'mother_last_name', 'role', 'career_id', 'password']
+        fields = ['id', 'username', 'birthdate', 'email', 'name', 'studies_degree', 'father_last_name', 'mother_last_name', 'role', 'career', 'password']
 
     # Sobrescribimos create para manejar el hash de la contraseña al crear un usuario
     def create(self, validated_data):
@@ -26,5 +26,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
         if data.get('role') == 'teacher' and not data.get('studies_degree'):
             raise serializers.ValidationError({
                 'studies_degree': 'Studies degree is required for teachers.'
+            })
+        # Validación personalizada para el rol 'student'
+        if data.get('role') == 'student' and not data.get('birthdate'):
+            raise serializers.ValidationError({
+                'birthdate': 'Birthdate is required for students.'
+            })
+        if data.get('role') == 'student' and not data.get('career'):
+            raise serializers.ValidationError({
+                'career': 'Career is required for students.'
             })
         return data

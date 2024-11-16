@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'subjects',
     'corsheaders',
     'enrollments',
+    'schedules',
 ]
 
 AUTH_USER_MODEL = 'auth_custom.CustomUser'
