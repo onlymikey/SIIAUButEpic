@@ -587,11 +587,11 @@ Descripción: Se crea un nuevo grupo junto con sus horarios.
 Body JSON:
 {
     "name": "A101",
-    "start_date": "15-11-2024",
-    "end_date": "15-01-2025",
+    "start_date": "15-11-2024", (formato:DD-MM-YYYY, fecha inicio<fecha fin)
+    "end_date": "15-01-2025", (formato:DD-MM-YYYY)
     "subject": 1,
     "teacher": 2,
-    "semester": "2024B",
+    "semester": "2024B", (semestre no debe ser menor a fecha inicio)
     "max_students": 30
 }
 Respuesta para este request:
@@ -719,25 +719,24 @@ status: 200
 Método: POST  
 Descripción: Crea un grupo y sus horarios.
 Body JSON:
-Body JSON:
 {
     "name": "A101",
-    "start_date": "15-11-2024",
-    "end_date": "15-01-2025",
+    "start_date": "15-11-2024", (formato:DD-MM-YYYY, fecha inicio<fecha fin)
+    "end_date": "15-01-2025", (formato:DD-MM-YYYY)
     "subject": 1,
     "teacher": 2,
-    "semester": "2024B",
+    "semester": "2024B", (semestre no debe ser menor a fecha inicio)
     "max_students": 30,
     "schedule1": {
         "day": "Monday",
-        "start_time": "08:00",
-        "end_time": "10:00",
+        "start_time": "08:00", (no puede ser menor a 07:00)
+        "end_time": "10:00", (no puede ser mayor a 19:00)
         "classroom": 1
     },
     "schedule2": {
         "day": "Wednesday",
-        "start_time": "08:00",
-        "end_time": "10:00",
+        "start_time": "08:00", (no puede ser menor a 07:00)
+        "end_time": "10:00", (no puede ser mayor a 19:00)
         "classroom": 1
     }
 }
@@ -749,3 +748,114 @@ Respuesta para este request:
 status: 201
 
 
+
+
+*****************************************************************
+*********                                       *****************
+*********                  SUBJECTS             *****************
+*********                                       *****************
+*****************************************************************
+
+
+*************************************************subjects/**************************************************************
+Método: POST
+Descripción: Se crea una nueva materia.
+Body JSON:
+{
+    "career": 1,
+    "name": "Mathematics"
+}
+Respuesta para este request:
+{
+    "id": 1,
+    "career": 1,
+    "name": "Mathematics"
+}
+status: 201
+
+
+
+
+*************************************************subjects/**************************************************************
+Método: GET
+Descripción: Obtener todas las materias.
+Body JSON: empty
+Respuesta para este request:
+[
+    {
+        "id": 1,
+        "career": 1,
+        "name": "Mathematics"
+    },
+    {
+        "id": 2,
+        "career": 2,
+        "name": "Physics"
+    }
+]
+status: 200
+
+
+
+
+*************************************************subjects/int:pk/**************************************************************
+Método: GET
+Descripción: Obtiene una materia específica.
+Endpoint Example: subjects/1/
+Body JSON: empty
+Respuesta para este request:
+{
+    "id": 1,
+    "career": 1,
+    "name": "Mathematics"
+}
+status: 200
+
+
+
+*************************************************subjects/int:pk/**************************************************************
+Método: PUT
+Descripción: Edita una materia específica.
+Endpoint Example: subjects/1/
+Body JSON:
+{
+    "career": 2,
+    "name": "Advanced Mathematics"
+}
+Respuesta para este request:
+{
+    "id": 1,
+    "career": 2,
+    "name": "Advanced Mathematics"
+}
+status: 200
+
+
+
+*************************************************subjects/int:pk/**************************************************************
+Método: DELETE
+Descripción: Elimina una materia.
+Endpoint Example: subjects/1/
+Body JSON: empty
+Respuesta para este request: empty
+status: 204
+Respuesta de error para DELETE:
+{
+    "detail": "Not found."
+}
+Descripción: No se ha encontrado una materia con ese ID.
+Status: 404 Not Found
+
+
+
+
+
+*************************************************subjects/next_id/**************************************************************
+Método: GET
+Descripción: Obtiene el ID que será asignado a la siguiente materia a registrar.
+Body JSON: empty
+Respuesta para este request:
+{
+    "next_id": 3
+}
+status: 200

@@ -19,6 +19,12 @@ class EnrollmentDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Enrollment.objects.all()
     serializer_class = EnrollmentSerializer
 
+    def perform_destroy(self, instance):
+        group = instance.group
+        group.quantity_students -= 1  # Decrementar la cantidad de estudiantes
+        group.save()
+        instance.delete()
+
 # Vista para obtener el siguiente ID que se usará en la tabla enrollment.
 class EnrollmentNextIdView(APIView):
     def get(self, request, *args, **kwargs):
@@ -36,34 +42,20 @@ class EnrollmentNextIdView(APIView):
             if(auto_increment_value == None):
                 auto_increment_value = 1
         return auto_increment_value
-
-# vista para obtener todos los grupos por usuario y organizarlos por dia
-class EnrollmentByUserView(APIView):
-    def get(self, request, user_id):
-        # Obtener el usuario
-        user = get_object_or_404(CustomUser, id=user_id)
-
-        # Filtrar las inscripciones por el usuario
-        enrollments = Enrollment.objects.filter(user=user).select_related('group')
-        """"DE AQUI HACIA ABAJO TODO CAMBIA DEPENDIENDO DE LA LOGICA QUE QUERRAMOS PARA LOS GRUPOS"""
-        # # Diccionario para organizar los grupos por día
-        # grouped_by_day = {}
-
-        # for enrollment in enrollments:
-        #     group = enrollment.group
-        #     day = group.day  # Suponiendo que "day" es un atributo de Group
-
-        #     # Inicializar la lista para el día si aún no existe
-        #     if day not in grouped_by_day:
-        #         grouped_by_day[day] = []
-
-        #     # Agregar el grupo al día correspondiente
-        #     grouped_by_day[day].append({
-        #         'group_id': group.id,
-        #         'name': group.name,
-        #         'description': group.description,
-        #         # Agregar más atributos si es necesario
-        #     })
-
-        # # Devolver el JSON agrupado por día
-        # return Response(grouped_by_day)
+    
+# Vista para obtener los grupos de un usuario
+class UserGroupsView(APIView):
+    def get(self, request, user_id, *args, **kwargs):
+        enrollments = Enrollment.objects.filter(user__id=user_id)
+        groups = [enrollment.group for enrollment in enrollments]
+        return Response({
+            "user_id": user_id,
+            "groups": [
+                {
+                    "id": group.id,
+                    "name": group.name,
+                    "start_date": group.start_date,
+                    "end_date": group.end_date,
+                } for group in groups
+            ]
+        })
