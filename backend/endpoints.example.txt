@@ -321,6 +321,19 @@ status:404
 
 
 
+************************************************careers/next-id/**************************************************************
+método: GET
+descripción: Obtiene el id que sera asignado a la siguiente career a registrar.
+body JSON: empty
+respuesta para este request:
+{
+    "next_id" : 1
+}
+status:200
+
+
+
+
 
 *****************************************************************
 *********                                       *****************
@@ -328,7 +341,7 @@ status:404
 *********                                       *****************
 *****************************************************************
 
-
+************************************************classrooms/**************************************************************
 Método: POST
 Descripción: Se crea un nuevo salón de clases.
 Body JSON:
@@ -337,3 +350,402 @@ Body JSON:
     "floor": 1
 }
 Respuesta para este request:
+{
+    "id": 1,
+    "name": "A101",
+    "floor": 1
+}
+status:201
+
+
+
+
+************************************************classrooms/**************************************************************
+Método: GET
+Descripción: Obtener todos los salones de clases.
+Body JSON: empty
+Respuesta para este request:
+[
+    {
+        "id": 1,
+        "name": "A101",
+        "floor": 1
+    },
+    {
+        "id": 2,
+        "name": "B202",
+        "floor": 2
+    },
+    {
+        "id": 3,
+        "name": "C303",
+        "floor": 3
+    }
+]
+status: 200
+
+
+
+************************************************classrooms/<int:PK>/**************************************************************
+Método: GET
+Descripción: Obtiene un salón de clases en específico.
+Endpoint Example: classrooms/1/
+Body JSON: empty
+Respuesta para este request:
+{
+    "id": 1,
+    "name": "A101",
+    "floor": 1
+}
+status: 200
+
+
+
+
+************************************************classrooms/<int:PK>/**************************************************************
+Método: PUT
+Descripción: Edita un salón de clases en específico.
+Endpoint Example: classrooms/1/
+Body JSON:
+{
+    "name": "D404",
+    "floor": 4
+}
+
+Respuesta para este request:
+{
+    "id": 1,
+    "name": "D404",
+    "floor": 4
+}
+status: 200
+
+
+
+
+************************************************classrooms/<int:PK>/**************************************************************
+Método: DELETE
+Descripción: Elimina un salón de clases.
+Endpoint Example: classrooms/1/
+Body JSON: empty
+Respuesta para este request: empty
+status: 204
+Respuesta de error para DELETE:
+{
+    "detail": "Not found."
+}
+Descripción: No se ha encontrado un salón de clases con ese ID.
+status: 404
+
+
+
+************************************************classrooms/next-id/**************************************************************
+método: GET
+descripción: Obtiene el id que sera asignado al siguiente classroom a registrar.
+body JSON: empty
+respuesta para este request:
+{
+    "next_id" : 1
+}
+status:200
+
+
+
+
+
+*****************************************************************
+*********                                       *****************
+*********                ENROLLMENTS            *****************
+*********                                       *****************
+*****************************************************************
+
+************************************************enrollments/**************************************************************
+Método: POST
+Descripción: Se crea una nueva inscripción.
+Body JSON:
+{
+    "user": 1,
+    "group": 1
+}
+Respuesta para este request:
+{
+    "id": 1,
+    "user": 1,
+    "group": 1
+}
+status: 201
+
+
+
+************************************************enrollments/**************************************************************
+Método: GET
+Descripción: Obtener todas las inscripciones.
+Body JSON: empty
+Respuesta para este request:
+[
+    {
+        "id": 1,
+        "user": 1,
+        "group": 1
+    },
+    {
+        "id": 2,
+        "user": 2,
+        "group": 1
+    },
+    {
+        "id": 3,
+        "user": 3,
+        "group": 2
+    }
+]
+status: 200
+
+
+
+************************************************enrollments/<int:pk>/**************************************************************
+Método: GET
+Descripción: Obtiene una inscripción en específico.
+Endpoint Example: enrollments/1/
+Body JSON: empty
+Respuesta para este request:
+{
+    "id": 1,
+    "user": 1,
+    "group": 1
+}
+status: 200
+
+
+
+************************************************enrollments/<int:pk>/**************************************************************
+Método: PUT
+Descripción: Edita una inscripción en específico.
+Endpoint Example: enrollments/1/
+Body JSON:
+{
+    "user": 2,
+    "group": 2
+}
+Respuesta para este request:
+{
+    "id": 1,
+    "user": 2,
+    "group": 2
+}
+status: 200
+
+
+
+************************************************enrollments/<int:pk>/**************************************************************
+Método: DELETE
+Descripción: Elimina una inscripción.
+Endpoint Example: enrollments/1/
+Body JSON: empty
+Respuesta para este request: empty
+Status: 204 No Content
+Respuesta de error para DELETE:
+{
+    "detail": "Not found."
+}
+Descripción: No se ha encontrado una inscripción con ese ID.
+Status: 404 Not Found
+
+
+************************************************enrollments/by_user/<int:user_id>/**************************************************************
+Método: GET
+Descripción: Obtiene todas las inscripciones asociadas a un usuario específico.
+<<<<<<<<<<<<<<<<<<<<<<<<<WORKING ON IT>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Status: 200
+
+
+
+************************************************enrollments/next_id/**************************************************************
+Método: GET
+Descripción: Obtiene el ID que será asignado a la siguiente inscripción a registrar.
+Body JSON: empty
+Respuesta para este request:
+{
+    "next_id": 5
+}
+status: 200
+
+
+
+
+
+
+*****************************************************************
+*********                                       *****************
+*********                  GROUPS               *****************
+*********                                       *****************
+*****************************************************************
+
+************************************************groups/**************************************************************
+Método: POST  
+Descripción: Se crea un nuevo grupo junto con sus horarios.  
+Body JSON:
+{
+    "name": "A101",
+    "start_date": "15-11-2024",
+    "end_date": "15-01-2025",
+    "subject": 1,
+    "teacher": 2,
+    "semester": "2024B",
+    "max_students": 30
+}
+Respuesta para este request:
+{
+    "message": "Grupo creado exitosamente",
+    "group_id": 1
+}
+status: 201
+
+
+
+************************************************groups/**************************************************************
+Método: GET  
+Descripción: Obtener todos los grupos. 
+Body JSON: empty
+Respuesta para este request:
+[
+    {
+        "id": 1,
+        "name": "A101",
+        "start_date": "15-11-2024",
+        "end_date": "15-01-2025",
+        "subject": 1,
+        "teacher": 2,
+        "semester": "2024B",
+        "quantity_students": 0,
+        "max_students": 30
+    },
+    {
+        "id": 2,
+        "name": "B202",
+        "start_date": "01-12-2024",
+        "end_date": "01-02-2025",
+        "subject": 2,
+        "teacher": 3,
+        "semester": "2024B",
+        "quantity_students": 25,
+        "max_students": 30
+    }
+]
+
+status: 200
+
+
+
+************************************************groups/int:PK/**************************************************************
+Método: GET  
+Descripción: Obtiene un grupo en específico.
+Endpoint Example: groups/1/
+Body JSON: empty
+Respuesta para este request:
+{
+    "id": 1,
+    "name": "A101",
+    "start_date": "15-11-2024",
+    "end_date": "15-01-2025",
+    "subject": 1,
+    "teacher": 2,
+    "semester": "2024B",
+    "quantity_students": 0,
+    "max_students": 30
+}
+status: 200
+
+
+
+************************************************groups/int:PK/**************************************************************
+Método: PUT  
+Descripción: Edita un grupo en específico.
+Endpoint Example: groups/1/
+Body JSON:
+{
+    "name": "C303",
+    "start_date": "20-11-2024",
+    "end_date": "20-01-2025",
+    "subject": 3,
+    "teacher": 4,
+    "semester": "2024A",
+    "max_students": 40
+}
+Respuesta para este request:
+{
+    "id": 1,
+    "name": "C303",
+    "start_date": "20-11-2024",
+    "end_date": "20-01-2025",
+    "subject": 3,
+    "teacher": 4,
+    "semester": "2024A",
+    "quantity_students": 0,
+    "max_students": 40
+}
+status: 200
+
+
+
+************************************************groups/int:PK/**************************************************************
+Método: DELETE  
+Descripción: Elimina un grupo.
+Endpoint Example: groups/1/
+Body JSON: empty
+Respuesta para este request: empty
+status: 204
+Respuesta de error para DELETE:
+{
+    "detail": "Not found."
+}
+Descripción: No se ha encontrado un grupo con ese ID.
+status: 404
+
+
+************************************************groups/next_id/**************************************************************
+Método: GET  
+Descripción: Obtiene el ID que será asignado al siguiente grupo a registrar.
+Body JSON: empty
+Respuesta para este request:
+{
+    "next_id": 3
+}
+
+status: 200
+
+
+************************************************group/create/**************************************************************
+Método: POST  
+Descripción: Crea un grupo y sus horarios.
+Body JSON:
+Body JSON:
+{
+    "name": "A101",
+    "start_date": "15-11-2024",
+    "end_date": "15-01-2025",
+    "subject": 1,
+    "teacher": 2,
+    "semester": "2024B",
+    "max_students": 30,
+    "schedule1": {
+        "day": "Monday",
+        "start_time": "08:00",
+        "end_time": "10:00",
+        "classroom": 1
+    },
+    "schedule2": {
+        "day": "Wednesday",
+        "start_time": "08:00",
+        "end_time": "10:00",
+        "classroom": 1
+    }
+}
+Respuesta para este request:
+{
+    "message": "Grupo y horarios creados exitosamente",
+    "group_id": 1
+}
+status: 201
+
+
