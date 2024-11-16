@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { Button, Select, Input, SelectItem, DateInput } from '@nextui-org/react'; // Importa los componentes necesarios de NextUI
+import React, { useState, useEffect, useRef } from 'react';
+import { Button, Select, Input, SelectItem, DateInput, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'; // Importa los componentes necesarios de NextUI
 import { CalendarDate } from '@internationalized/date'; // Importa CalendarDate
-import { roles } from '../data/roles'; // Importa los roles predefinidos
+import { roles, status } from '../data/data'; // Importa los roles predefinidos
 import api from '../services/api'; // Importa el cliente HTTP
 
 export default function Users() {
@@ -25,6 +25,31 @@ export default function Users() {
   });
   
   const [errors, setErrors] = useState({});
+  const [hasSearched, setHasSearched] = useState(false);
+  const [popoverContent, setPopoverContent] = useState(''); // Estado para el contenido del popover
+  const [showPopover, setShowPopover] = useState(false); // Estado para mostrar el popover
+  const popoverRef = useRef(null); // Referencia al popover
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popoverRef.current && !popoverRef.current.contains(event.target)) {
+        setShowPopover(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [popoverRef]);
+
+  // Función para convertir la fecha al formato DD-MM-YYYY
+  const formatDate = (date) => {
+    const day = date.day.toString().padStart(2, '0');
+    const month = date.month.toString().padStart(2, '0');
+    const year = date.year.toString();
+    return `${day}-${month}-${year}`;
+  };
 
   // Maneja el envío del formulario
   const handleSave = async (e) => {
@@ -43,22 +68,20 @@ export default function Users() {
         role: formData.role,
         username: formData.username,
         password: formData.password,
-        //Debug
-        birthdate: "2000-01-01",
     };
 
       if (role === 'teacher') {
         data = {
             ...data,
-            // career: formData.career,
-            // studies_degree: formData.studies_degree,
+            career: formData.career,
+            studies_degree: formData.studies_degree,
         };
     } else if (role === 'student') {
         data = {
             ...data,
             is_active: formData.is_active,
-            birthdate: formData.birthdate,
-            // career: formData.career,
+            birthdate: formatDate(formData.birthdate), // Convierte la fecha al formato requerido
+            career: formData.career,
         };
     }
 
@@ -66,13 +89,16 @@ export default function Users() {
       const response = await api.post('/users/', data);
   
       if (response.status === 201) {
+        setPopoverContent('Datos guardados correctamente');
         console.log('Datos enviados exitosamente:', response.data);
+        handleCancel();
       }
     } catch (error) {
       if (error.response && error.response.status === 400) {
         const validationErrors = error.response.data;
         const newErrors = {};
         console.log('Errores de validación:', validationErrors);
+        
   
         for (const key in validationErrors) {
           if (Object.prototype.hasOwnProperty.call(validationErrors, key)) {
@@ -80,12 +106,17 @@ export default function Users() {
           }
         }
         setErrors(newErrors);
+        setPopoverContent('Error al guardar los datos');
       } else {
         console.error('Error al enviar los datos:', error);
         setErrors({ general: 'Error al enviar los datos' });
+        setPopoverContent('Error al enviar los datos');
+
       }
     } finally {
       setLoading(false);
+      setShowPopover(true);
+      setTimeout(() => setShowPopover(false), 10000); // Oculta el popover después de 10 segundos
     }
   };
 
@@ -96,8 +127,17 @@ export default function Users() {
     console.log('Role:', value);
 
     setErrors((prevErrors) => {
-      const { role, ...rest } = prevErrors;  // Elimina el error de rol si existe
-      return rest;
+      const newErrors = { ...prevErrors };
+      delete newErrors.role;
+      if (role === 'student') {
+        delete newErrors.is_active;
+        delete newErrors.birthdate;
+        delete newErrors.career;
+      } else if (role === 'teacher') {
+        delete newErrors.career;
+        delete newErrors.studies_degree;
+      }
+      return newErrors;
     });
   };
   //Maneja el cambio de input
@@ -129,12 +169,18 @@ export default function Users() {
   //Maneja el evento de nuevo
   const handleNew = () => {
     setIsEditing(true);
+    setHasSearched(true);
+  };
+
+  const handleEdit = () => {
+    setIsEditing(true); // Activa el estado de edición
   };
 
 
   //Maneja el evento de cancelar
   const handleCancel = () => {
     setIsEditing(false);
+    setHasSearched(false);
     setFormData({
       id: '',
       name: '',
@@ -152,6 +198,18 @@ export default function Users() {
   
     // Restablece los errores
     setErrors({});
+  };
+
+  // Maneja el evento de búsqueda
+  const handleSearch = () => {
+    setHasSearched(true); // Actualiza el estado de búsqueda
+  };
+
+  const handlePopoverChange = (isOpen) => {
+    setShowPopover(isOpen);
+    if (!isOpen) {
+      setPopoverContent(''); // Limpia el contenido del popover cuando se cierra
+    }
   };
 
   return (
@@ -174,9 +232,9 @@ export default function Users() {
               />
             </div>
             <div className="flex items-end space-x-2 pb-2">
-              <Button color="primary" variant="flat">Buscar</Button>
-              <Button color="secondary" variant="flat">Editar</Button>
-              <Button color="danger" variant="flat">Baja</Button>
+              <Button color="primary" variant="flat" onClick={handleSearch} isDisabled={isEditing}>Buscar</Button>
+              <Button color="secondary" variant="flat" isDisabled={!hasSearched || isEditing} onClick={handleEdit}>Editar</Button>
+              <Button color="danger" variant="flat" isDisabled={!hasSearched || isEditing}>Baja</Button>
             </div>
           </div>
         </div>
@@ -211,14 +269,32 @@ export default function Users() {
           </Select>
           {role === 'student' && (
             <>
-              <Input isRequired label="Estado" placeholder="Ej. Activo" variant="bordered" isDisabled={!isEditing} name="is_active" value={formData.is_active} onChange={handleInputChange} errorMessage={errors.is_active} isInvalid={!!errors.is_active} />
+              <Select
+                label="Estado"
+                isRequired
+                placeholder="Selecciona un Estado"
+                onChange={(e) => handleInputChange({ target: { name: 'is_active', value: e.target.value } })}
+                variant="bordered"
+                errorMessage={errors.is_active}
+                isInvalid={!!errors.is_active}
+                className="bg-transparent text-white rounded-md"
+                isDisabled={!isEditing}
+                name="is_active"
+                value={formData.is_active}
+              >
+                {status.map((status) => (
+                  <SelectItem key={status.key} value={status.key}>
+                    {status.label}
+                  </SelectItem>
+                ))}
+              </Select>
               <DateInput isRequired label="Fecha de nacimiento" placeholderValue={new CalendarDate(2000, 1, 1)} variant="bordered" className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="birthdate" value={formData.birthdate} onChange={handleDateChange} errorMessage={errors.birthdate} isInvalid={!!errors.birthdate} />
-              <Input isRequired label="career" placeholder="Ej. Ing. Mecanica" variant="bordered" isDisabled={!isEditing} name="career" value={formData.career} onChange={handleInputChange} errorMessage={errors.career} isInvalid={!!errors.career} />
+              <Input isRequired label="Carrera" placeholder="Ej. Ing. Mecanica" variant="bordered" isDisabled={!isEditing} name="career" value={formData.career} onChange={handleInputChange} errorMessage={errors.career} isInvalid={!!errors.career} />
             </>
           )}
           {role === 'teacher' && (
             <>
-              <Input isRequired label="career" placeholder="Ej. Ing. Quimica" variant="bordered" isDisabled={!isEditing} name="career" value={formData.career} onChange={handleInputChange} errorMessage={errors.career} isInvalid={!!errors.career} />
+              <Input isRequired label="Carrera" placeholder="Ej. Ing. Quimica" variant="bordered" isDisabled={!isEditing} name="career" value={formData.career} onChange={handleInputChange} errorMessage={errors.career} isInvalid={!!errors.career} />
               <Input isRequired label="Grado de estudios" placeholder="Ej. Doctorado" variant="bordered" isDisabled={!isEditing} name="studies_degree" value={formData.studies_degree} onChange={handleInputChange} errorMessage={errors.studies_degree} isInvalid={!!errors.studies_degree} />
             </>
           )}
@@ -226,9 +302,18 @@ export default function Users() {
 
         {/* Botones de Acción */}
         <div className="flex justify-around mt-6">
-          <Button color="success" variant="flat" onClick={handleNew}>Nuevo</Button>
-          <Button color="primary" variant="flat" isDisabled={!isEditing || loading || Object.values(errors).some(error => error)} onClick={handleSave} isLoading={loading} >Guardar</Button>
-          <Button color="default" variant="flat" isDisabled={!isEditing} onClick={handleCancel}>Cancelar</Button>
+        <Button color="success" variant="flat" onClick={handleNew} isDisabled={hasSearched}>Nuevo</Button>
+        <Popover placement="bottom" showArrow={true} isOpen={showPopover} onOpenChange={handlePopoverChange}>
+            <PopoverTrigger>
+              <Button color="primary" variant="flat" isDisabled={!isEditing || loading || Object.values(errors).some(error => error)} onClick={handleSave} isLoading={loading}>Guardar</Button>
+            </PopoverTrigger>
+            <PopoverContent>
+              <div className="px-1 py-2">
+                <div className="text-small font-bold">{popoverContent}</div>
+              </div>
+            </PopoverContent>
+          </Popover>
+          <Button color="default" variant="flat" isDisabled={!hasSearched} onClick={handleCancel}>Cancelar</Button>
         </div>
       </div>
     </div>
