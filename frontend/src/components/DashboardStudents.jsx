@@ -79,7 +79,7 @@ const DashboardStudents = () => {
       {/* Botones */}
       <div className="grid grid-cols-4 gap-6">
         {[
-          { label: "Registrar materias", icon: <MdCalendarMonth />, color: "bg-blue-600", path: "#" },
+          { label: "Registrar materias", icon: <MdCalendarMonth />, color: "bg-blue-600", path: "/EnrollCourses" },
           { label: "Oferta Académica", icon: <MdAccountBalance />, color: "bg-green-600", path: "/AcademicsPrograms" },
           { label: "Kardex", icon: <MdInsertDriveFile />, color: "bg-yellow-600", path: "#" },
           { label: "Cerrar Sesión", icon: <MdLogin />, color: "bg-red-600", path: "#" },
