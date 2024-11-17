@@ -1,37 +1,42 @@
 import React from "react";
-import { Link } from 'react-router-dom';
-import { Card, CardHeader, CardBody, Button } from "@nextui-org/react";
-import { MdCalendarMonth, MdCalendarToday, MdAccountBalance , MdInsertDriveFile, MdLogin, MdNotificationImportant } from "react-icons/md";
-
+import { Link } from "react-router-dom";
+import {
+  MdCalendarMonth,
+  MdCalendarToday,
+  MdAccountBalance,
+  MdInsertDriveFile,
+  MdLogin,
+  MdNotificationImportant,
+} from "react-icons/md";
 
 const DashboardStudents = () => {
   return (
-    <div className="p-10 max-w-6xl mx-auto bg-black bg-opacity-40 backdrop-filter backdrop-blur-lg rounded-lg w-full ">
+    <div className="p-10 max-w-6xl mx-auto bg-gray-900 bg-opacity-90 backdrop-blur-lg rounded-lg">
       {/* Título del Dashboard */}
-      <h1 className="text-foreground font-sans font-extrabold text-3xl justify-center items-center text-center mb-6">Dashboard</h1>
+      <h1 className="text-white font-bold text-4xl text-center mb-6">
+        Dashboard
+      </h1>
 
       {/* Bienvenida */}
-      <Card style={{ marginBottom: "20px", backgroundColor: "#192a56", color: "white" }}>
-        <CardBody>
-          <h2 className="text-foreground font-sans text-2xl justify-center items-center text-center mb-6">Bienvenido XXXXX (estudiante / profesor)</h2>
-        </CardBody>
-      </Card>
+      <div className="bg-blue-800 text-white p-6 rounded-lg shadow-lg mb-6">
+        <h2 className="text-2xl font-semibold text-center">
+          Bienvenido XXXXX (estudiante / profesor)
+        </h2>
+      </div>
 
-      {/* Contenedor de Mi horario y Avisos */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "20px", marginBottom: "20px" }}>
+      {/* Contenedor de Mi Horario y Avisos */}
+      <div className="grid grid-cols-3 gap-6 mb-6">
         {/* Mi Horario */}
-        <Card style={{ backgroundColor: "#1B1F3A", color: "white" }}>
-          <CardHeader>
-            <div style={{ display: "flex", alignItems: "center" }}>
-            <MdCalendarToday style={{ fontSize: "1.5rem", marginRight: "8px", color: "white" }} /> {/* Tamaño y color opcionales */}
-            <h3 style={{ margin: 0, color: "white" }}>Mi horario</h3>
-            </div>
-          </CardHeader>
-          <CardBody>
-            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "center", color: "white" }}>
+        <div className="col-span-2 bg-gray-800 text-white rounded-lg shadow-lg">
+          <div className="flex items-center p-4 border-b border-gray-600">
+            <MdCalendarToday className="text-2xl mr-2" />
+            <h3 className="text-xl font-semibold">Mi horario</h3>
+          </div>
+          <div className="p-4">
+            <table className="w-full text-center text-white border-collapse">
               <thead>
-                <tr style={{ borderBottom: "1px solid white" }}>
-                  <th style={{ padding: "10px" }}>HORA</th>
+                <tr className="border-b border-gray-600">
+                  <th className="py-2">HORA</th>
                   <th>L</th>
                   <th>M</th>
                   <th>I</th>
@@ -41,8 +46,8 @@ const DashboardStudents = () => {
               </thead>
               <tbody>
                 {["07:00-09:00", "09:00-11:00", "11:00-13:00", "13:00-15:00"].map((hora) => (
-                  <tr key={hora} style={{ borderBottom: "1px solid white" }}>
-                    <td style={{ padding: "10px" }}>{hora}</td>
+                  <tr key={hora} className="border-b border-gray-600">
+                    <td className="py-2">{hora}</td>
                     <td>Text</td>
                     <td>Text</td>
                     <td>Text</td>
@@ -52,54 +57,40 @@ const DashboardStudents = () => {
                 ))}
               </tbody>
             </table>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
 
         {/* Avisos */}
-        <Card style={{ backgroundColor: "#1B1F3A", color: "white" }}>
-          <CardHeader>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <MdNotificationImportant style={{ fontSize: "1.5rem", marginRight: "5px", color: "white" }} /> {/* Tamaño y color opcionales */}
-            <h3 style={{ margin: 0, color: "white" }}>AVISOS</h3>
-            </div>
-          </CardHeader>
-          <CardBody>
-            <ul style={{ listStyleType: "disc", paddingLeft: "20px" }}>
+        <div className="bg-gray-800 text-white rounded-lg shadow-lg">
+          <div className="flex items-center p-4 border-b border-gray-600">
+            <MdNotificationImportant className="text-2xl mr-2" />
+            <h3 className="text-xl font-semibold">Avisos</h3>
+          </div>
+          <div className="p-4">
+            <ul className="list-disc list-inside">
               <li>AVISO 1</li>
               <li>AVISO 2</li>
               <li>AVISO 3</li>
             </ul>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
       </div>
 
       {/* Botones */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px" }}>
+      <div className="grid grid-cols-4 gap-6">
         {[
-          { label: "Registrar materias", icon: <MdCalendarMonth />, color: "#007bff" }, 
-          { label: "Oferta Académica", icon: <MdAccountBalance />, color: "#28a745", path: "/AcademicsPrograms" },
-          { label: "Kardex", icon: <MdInsertDriveFile />, color: "#ffc107" }, 
-          { label: "Cerrar Sesión", icon: <MdLogin />, color: "#dc3545" }, 
+          { label: "Registrar materias", icon: <MdCalendarMonth />, color: "bg-blue-600", path: "/EnrollCourses" },
+          { label: "Oferta Académica", icon: <MdAccountBalance />, color: "bg-green-600", path: "/AcademicsPrograms" },
+          { label: "Kardex", icon: <MdInsertDriveFile />, color: "bg-yellow-600", path: "#" },
+          { label: "Cerrar Sesión", icon: <MdLogin />, color: "bg-red-600", path: "#" },
         ].map((button) => (
-          <Link to={button.path || "#"} key={button.label} style={{ textDecoration: 'none' }}>
-            <Button
-              variant="flat"
-              size="lg"
-              style={{
-                backgroundColor: "#1B1F3A",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                color: button.color,
-                padding: "50px",
-                width: "100%",
-              }}
-            >
-              <div style={{ fontSize: "3rem", marginBottom: "1px", color: "white" }}>
-                {button.icon}
-              </div>
-              {button.label}
-            </Button>
+          <Link
+            to={button.path}
+            key={button.label}
+            className={`${button.color} flex flex-col items-center justify-center p-6 rounded-lg shadow-lg hover:scale-105 transform transition`}
+          >
+            <div className="text-3xl text-white mb-2">{button.icon}</div>
+            <span className="text-white font-semibold">{button.label}</span>
           </Link>
         ))}
       </div>

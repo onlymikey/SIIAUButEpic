@@ -8,7 +8,8 @@ import Careers from "./components/Careers";
 import Dashboard from "./components/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import DashboardStudents from "./components/DashboardStudents";
-import AcademicOffer from "./components/AcademicPrograms"; 
+import AcademicOffer from "./components/AcademicPrograms";
+import RegistrarMaterias from "./components/EnrollCourses";  
 
 export default function App() {
   const userRole = 'admin';
@@ -32,6 +33,8 @@ export default function App() {
                     <Route path="/careers" element={<Careers />} />
                     <Route path="/DashboardStudents" element={<DashboardStudents />} />
                     <Route path="/AcademicsPrograms" element={<AcademicOffer />} />
+                    <Route path="/EnrollCourses" element={<RegistrarMaterias />} />
+
                   </Routes>
                 </div>
               </div>
