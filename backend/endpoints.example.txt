@@ -552,10 +552,69 @@ Descripción: No se ha encontrado una inscripción con ese ID.
 Status: 404 Not Found
 
 
-************************************************enrollments/by_user/<int:user_id>/**************************************************************
+************************************************enrollments/user/<int:user_id>/**************************************************************
 Método: GET
 Descripción: Obtiene todas las inscripciones asociadas a un usuario específico.
-<<<<<<<<<<<<<<<<<<<<<<<<<WORKING ON IT>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+Endpoint Example: enrollments/user/1/
+Body JSON: empty
+Respuesta para este request:
+{
+    "user_id": 2,
+    "groups": [
+        {
+            "id": 6,
+            "name": "0024",
+            "start_date": "2024-01-10",
+            "end_date": "2024-06-10",
+            "schedules": [
+                {
+                    "day": "lunes",
+                    "start_at": "07:00",
+                    "end_at": "19:00",
+                    "classroom": {
+                        "name": "AS3",
+                        "floor": 2
+                    }
+                },
+                {
+                    "day": "miércoles",
+                    "start_at": "08:00",
+                    "end_at": "09:30",
+                    "classroom": {
+                        "name": "AS4",
+                        "floor": 2
+                    }
+                }
+            ]
+        },
+        {
+            "id": 8,
+            "name": "0025",
+            "start_date": "2024-01-10",
+            "end_date": "2024-06-10",
+            "schedules": [
+                {
+                    "day": "martes",
+                    "start_at": "07:00",
+                    "end_at": "19:00",
+                    "classroom": {
+                        "name": "AS3",
+                        "floor": 2
+                    }
+                },
+                {
+                    "day": "jueves",
+                    "start_at": "08:00",
+                    "end_at": "09:30",
+                    "classroom": {
+                        "name": "AS4",
+                        "floor": 2
+                    }
+                }
+            ]
+        }
+    ]
+}
 Status: 200
 
 

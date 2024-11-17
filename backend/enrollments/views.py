@@ -7,6 +7,7 @@ from .models import Enrollment
 from groups.models import Group
 from auth_custom.models import CustomUser
 from django.db import connection
+from schedules.models import Schedule
 
 
 # vista para listar o crear todos los grupos
@@ -43,19 +44,39 @@ class EnrollmentNextIdView(APIView):
                 auto_increment_value = 1
         return auto_increment_value
     
-# Vista para obtener los grupos de un usuario
 class UserGroupsView(APIView):
     def get(self, request, user_id, *args, **kwargs):
         enrollments = Enrollment.objects.filter(user__id=user_id)
         groups = [enrollment.group for enrollment in enrollments]
-        return Response({
+        
+        response_data = {
             "user_id": user_id,
-            "groups": [
+            "groups": []
+        }
+
+        for group in groups:
+            # Obtener los horarios relacionados con el grupo
+            schedules = Schedule.objects.filter(group=group)
+            schedule_data = [
                 {
-                    "id": group.id,
-                    "name": group.name,
-                    "start_date": group.start_date,
-                    "end_date": group.end_date,
-                } for group in groups
+                    "day": schedule.day,
+                    "start_at": schedule.start_at.strftime('%H:%M'),
+                    "end_at": schedule.end_at.strftime('%H:%M'),
+                    "classroom": {
+                        "name": schedule.classroom.name,
+                        "floor": schedule.classroom.floor
+                    }
+                }
+                for schedule in schedules
             ]
-        })
+
+            # Agregar los datos del grupo y su horario al JSON de respuesta
+            response_data["groups"].append({
+                "id": group.id,
+                "name": group.name,
+                "start_date": group.start_date,
+                "end_date": group.end_date,
+                "schedules": schedule_data
+            })
+
+        return Response(response_data)
