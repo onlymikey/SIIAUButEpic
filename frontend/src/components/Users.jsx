@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button, Select, Input, SelectItem, DateInput, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'; // Importa los componentes necesarios de NextUI
 import { CalendarDate } from '@internationalized/date'; // Importa CalendarDate
 import { roles, status } from '../data/data'; // Importa los roles predefinidos
-import api from '../services/api'; // Importa el cliente HTTP
+import api, { getCareers, getUserById, createUser, updateUser } from '../services/api'; // Importa el cliente HTTP y la función getCarreras
 
 export default function Users() {
   // Arreglar esto más adelante:    vvvvv
@@ -23,12 +23,14 @@ export default function Users() {
     career: '',
     studies_degree: ''
   });
-  
+  const [careers, setCareers] = useState([]); // Estado para las carreras
   const [errors, setErrors] = useState({});
   const [hasSearched, setHasSearched] = useState(false);
   const [popoverContent, setPopoverContent] = useState(''); // Estado para el contenido del popover
   const [showPopover, setShowPopover] = useState(false); // Estado para mostrar el popover
+  const [popoverTarget, setPopoverTarget] = useState(null); // Estado para el objetivo del popover
   const popoverRef = useRef(null); // Referencia al popover
+  const [isNew, setIsNew] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -42,6 +44,20 @@ export default function Users() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [popoverRef]);
+
+  // Obtener las carreras al cargar el componente
+  useEffect(() => {
+    const fetchCareers = async () => {
+      try {
+        const data = await getCareers();
+        setCareers(data);
+      } catch (error) {
+        console.error('Error al obtener las carreras:', error);
+      }
+    };
+
+    fetchCareers();
+  }, []);
 
   // Función para convertir la fecha al formato DD-MM-YYYY
   const formatDate = (date) => {
@@ -67,7 +83,7 @@ export default function Users() {
         email: formData.email,
         role: formData.role,
         username: formData.username,
-        password: formData.password,
+        password: formData.password
     };
 
       if (role === 'teacher') {
@@ -86,13 +102,27 @@ export default function Users() {
     }
 
     try {
-      const response = await api.post('/users/', data);
-  
-      if (response.status === 201) {
-        setPopoverContent('Datos guardados correctamente');
-        console.log('Datos enviados exitosamente:', response.data);
-        handleCancel();
+      let response;
+      if (hasSearched) {
+        // Realizar PUT si hasSearched es true
+        response = await updateUser(formData.id, data);
+        if (response.status === 200) {
+          setPopoverContent('Datos actualizados correctamente');
+          setPopoverTarget('save');
+          console.log('Datos actualizados exitosamente:', response.data);
+          handleCancel();
+        }
+      } else {
+        // Realizar POST si hasSearched es false
+        response = await createUser(data);
+        if (response.status === 201) {
+          setPopoverContent('Datos guardados correctamente');
+          setPopoverTarget('save');
+          console.log('Datos enviados exitosamente:', response.data);
+          handleCancel();
+        }
       }
+      console.log(response.status)
     } catch (error) {
       if (error.response && error.response.status === 400) {
         const validationErrors = error.response.data;
@@ -107,10 +137,12 @@ export default function Users() {
         }
         setErrors(newErrors);
         setPopoverContent('Error al guardar los datos');
+        setPopoverTarget('save');
       } else {
         console.error('Error al enviar los datos:', error);
         setErrors({ general: 'Error al enviar los datos' });
         setPopoverContent('Error al enviar los datos');
+        setPopoverTarget('save');
 
       }
     } finally {
@@ -169,7 +201,7 @@ export default function Users() {
   //Maneja el evento de nuevo
   const handleNew = () => {
     setIsEditing(true);
-    setHasSearched(true);
+    setIsNew(true);
   };
 
   const handleEdit = () => {
@@ -181,6 +213,7 @@ export default function Users() {
   const handleCancel = () => {
     setIsEditing(false);
     setHasSearched(false);
+    setIsNew(false);
     setFormData({
       id: '',
       name: '',
@@ -200,10 +233,50 @@ export default function Users() {
     setErrors({});
   };
 
+  // Función para convertir una fecha en formato YYYY-MM-DD a un objeto CalendarDate
+  const convertToCalendarDate = (dateString) => {
+  if (!dateString) return null;
+  const [day, month, year] = dateString.split('-').map(Number);
+  return new CalendarDate(year, month, day);
+};
+
   // Maneja el evento de búsqueda
-  const handleSearch = () => {
-    setHasSearched(true); // Actualiza el estado de búsqueda
-  };
+  const handleSearch = async () => {
+    setLoading(true);
+    try {
+      const data = await getUserById(formData.id);
+      const birthdate = convertToCalendarDate(data.birthdate)
+      handleRoleChange(data.role || ''); // Llama a handleRoleChange con el rol recibido
+      setFormData({
+        ...formData,
+        name: data.name || '',
+        father_last_name: data.father_last_name || '',
+        mother_last_name: data.mother_last_name || '',
+        email: data.email || '',
+        username: data.username || '',
+        role: data.role || '',
+        password: '', // No se debe rellenar el campo de contraseña
+        is_active: data.is_active || '',
+        birthdate: birthdate,
+        career: data.career || '',
+        studies_degree: data.studies_degree || ''
+      });
+      setIsEditing(false);
+      setHasSearched(true);
+      setPopoverTarget('search');
+      setPopoverContent('Búsqueda realizada correctamente');
+      setShowPopover(true); // Muestra el popover
+      setTimeout(() => setShowPopover(false), 10000);
+    } catch (error) {
+      console.error('Error al buscar el usuario:', error);
+      setPopoverContent('Error al buscar el usuario');
+      setPopoverTarget('search');
+      setShowPopover(true); // Muestra el popover
+      setTimeout(() => setShowPopover(false), 10000);
+  } finally{
+    setLoading(false);
+  }
+};
 
   const handlePopoverChange = (isOpen) => {
     setShowPopover(isOpen);
@@ -232,8 +305,17 @@ export default function Users() {
               />
             </div>
             <div className="flex items-end space-x-2 pb-2">
-              <Button color="primary" variant="flat" onClick={handleSearch} isDisabled={isEditing}>Buscar</Button>
-              <Button color="secondary" variant="flat" isDisabled={!hasSearched || isEditing} onClick={handleEdit}>Editar</Button>
+            <Popover placement="bottom" showArrow={true} isOpen={showPopover && popoverTarget === 'search'} onOpenChange={handlePopoverChange}>
+                <PopoverTrigger>
+                  <Button color="primary" variant="flat" onClick={handleSearch} isDisabled={isEditing || hasSearched}>Buscar</Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <div className="px-1 py-2">
+                    <div className="text-small font-bold">{popoverContent}</div>
+                  </div>
+                </PopoverContent>
+                </Popover>
+                <Button color="secondary" variant="flat" isDisabled={!hasSearched || isEditing} onClick={handleEdit}>Editar</Button>
               <Button color="danger" variant="flat" isDisabled={!hasSearched || isEditing}>Baja</Button>
             </div>
           </div>
@@ -260,6 +342,7 @@ export default function Users() {
             isDisabled={!isEditing}
             name="role"
             value={formData.role}
+            selectedKeys={new Set([formData.role])} // Selecciona la key del rol recibido desde el backend
           >
             {roles.map((role) => (
               <SelectItem key={role.key} value={role.key}>
@@ -280,7 +363,7 @@ export default function Users() {
                 className="bg-transparent text-white rounded-md"
                 isDisabled={!isEditing}
                 name="is_active"
-                value={formData.is_active}
+                selectedKeys={new Set([formData.is_active])}
               >
                 {status.map((status) => (
                   <SelectItem key={status.key} value={status.key}>
@@ -289,12 +372,50 @@ export default function Users() {
                 ))}
               </Select>
               <DateInput isRequired label="Fecha de nacimiento" placeholderValue={new CalendarDate(2000, 1, 1)} variant="bordered" className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="birthdate" value={formData.birthdate} onChange={handleDateChange} errorMessage={errors.birthdate} isInvalid={!!errors.birthdate} />
-              <Input isRequired label="Carrera" placeholder="Ej. Ing. Mecanica" variant="bordered" isDisabled={!isEditing} name="career" value={formData.career} onChange={handleInputChange} errorMessage={errors.career} isInvalid={!!errors.career} />
-            </>
+              <Select
+                label="Carrera"
+                isRequired
+                placeholder="Selecciona una Carrera"
+                onChange={(e) => handleInputChange({ target: { name: 'career', value: e.target.value } })}
+                variant="bordered"
+                errorMessage={errors.career}
+                isInvalid={!!errors.career}
+                className="bg-transparent text-white rounded-md"
+                isDisabled={!isEditing}
+                name="career"
+                value={formData.career}
+                selectedKeys={new Set([formData.career])} // Selecciona la key de la carrera recibida desde el backend
+              >
+                {careers.map((career) => (
+                  <SelectItem key={career.id} value={career.id}>
+                    {career.name}
+                  </SelectItem>
+                ))}
+              </Select>               </>
           )}
           {role === 'teacher' && (
             <>
-              <Input isRequired label="Carrera" placeholder="Ej. Ing. Quimica" variant="bordered" isDisabled={!isEditing} name="career" value={formData.career} onChange={handleInputChange} errorMessage={errors.career} isInvalid={!!errors.career} />
+              <Select
+                label="Carrera"
+                isRequired
+                placeholder="Selecciona una Carrera"
+                onChange={(e) => handleInputChange({ target: { name: 'career', value: e.target.value } })}
+                variant="bordered"
+                errorMessage={errors.career}
+                isInvalid={!!errors.career}
+                className="bg-transparent text-white rounded-md"
+                isDisabled={!isEditing}
+                name="career"
+                value={formData.career}
+                selectedKeys={new Set([formData.career])} // Selecciona la key de la carrera recibida desde el backend
+
+              >
+                {careers.map((career) => (
+                  <SelectItem key={career.id} value={career.id}>
+                    {career.name}
+                  </SelectItem>
+                ))}
+              </Select>              
               <Input isRequired label="Grado de estudios" placeholder="Ej. Doctorado" variant="bordered" isDisabled={!isEditing} name="studies_degree" value={formData.studies_degree} onChange={handleInputChange} errorMessage={errors.studies_degree} isInvalid={!!errors.studies_degree} />
             </>
           )}
@@ -302,8 +423,8 @@ export default function Users() {
 
         {/* Botones de Acción */}
         <div className="flex justify-around mt-6">
-        <Button color="success" variant="flat" onClick={handleNew} isDisabled={hasSearched}>Nuevo</Button>
-        <Popover placement="bottom" showArrow={true} isOpen={showPopover} onOpenChange={handlePopoverChange}>
+        <Button color="success" variant="flat" onClick={handleNew} isDisabled={isNew || hasSearched}>Nuevo</Button>
+        <Popover placement="bottom" showArrow={true} isOpen={showPopover && popoverTarget === 'save'} onOpenChange={handlePopoverChange}>
             <PopoverTrigger>
               <Button color="primary" variant="flat" isDisabled={!isEditing || loading || Object.values(errors).some(error => error)} onClick={handleSave} isLoading={loading}>Guardar</Button>
             </PopoverTrigger>
@@ -313,8 +434,8 @@ export default function Users() {
               </div>
             </PopoverContent>
           </Popover>
-          <Button color="default" variant="flat" isDisabled={!hasSearched} onClick={handleCancel}>Cancelar</Button>
-        </div>
+          <Button color="default" variant="flat" isDisabled={!isNew && !hasSearched} onClick={handleCancel}>Cancelar</Button>
+          </div>
       </div>
     </div>
   );

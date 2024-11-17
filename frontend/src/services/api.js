@@ -36,4 +36,44 @@ api.interceptors.request.use(async config => {
     return config;
 });
 
+export const getCareers = async () => {
+    try {
+      const response = await api.get('/careers/');
+      return response.data;
+    } catch (error) {
+      console.error('Error al obtener las carreras:', error);
+      throw error;
+    }
+  };
+
+export const getUserById = async (id) => {
+    try {
+        const response = await api.get(`/users/${id}/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener el usuario:', error);
+        throw error;
+    }
+};
+
+export const createUser = async (userData) => {
+    try {
+        const response = await api.post('/users/', userData);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al crear el usuario:', error);
+        throw error;
+    }
+};
+
+export const updateUser = async (id, userData) => {
+    try {
+        const response = await api.put(`/users/${id}/`, userData);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al actualizar el usuario:', error);
+        throw error;
+    }
+};
+
 export default api;
