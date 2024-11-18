@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, Select, Input, SelectItem, DateInput, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'; // Importa los componentes necesarios de NextUI
 import { CalendarDate } from '@internationalized/date'; // Importa CalendarDate
-import { roles, status } from '../data/data'; // Importa los roles predefinidos
+import { roles } from '../data/data'; // Importa los roles predefinidos
 import api, { getCareers, getUserById, createUser, updateUser } from '../services/api'; // Importa el cliente HTTP y la función getCarreras
 
 export default function Users() {
@@ -18,7 +18,6 @@ export default function Users() {
     username: '',
     role: '',
     password: '',
-    is_active: '',
     birthdate: new CalendarDate(2000, 1, 1), // Inicializa con una fecha válida
     career: '',
     studies_degree: ''
@@ -73,8 +72,7 @@ export default function Users() {
     setLoading(true);
 
     // Obtener el role seleccionado
-    const role = formData.role; // Asegúrate de que `selectedProfile` esté definido en tu is_active
-
+    const role = formData.role;
     // Crear un objeto de datos basado en el role seleccionado
     let data = {
         name: formData.name,
@@ -95,7 +93,6 @@ export default function Users() {
     } else if (role === 'student') {
         data = {
             ...data,
-            is_active: formData.is_active,
             birthdate: formatDate(formData.birthdate), // Convierte la fecha al formato requerido
             career: formData.career,
         };
@@ -156,7 +153,6 @@ export default function Users() {
   const handleRoleChange = (value) => {
     setRole(value);
     setFormData({ ...formData, role: value });
-    console.log('Role:', value);
 
     setErrors((prevErrors) => {
       const newErrors = { ...prevErrors };
@@ -245,8 +241,10 @@ export default function Users() {
     setLoading(true);
     try {
       const data = await getUserById(formData.id);
-      const birthdate = convertToCalendarDate(data.birthdate)
+      const birthdate = convertToCalendarDate(data.birthdate);
+      const career = careers.find(career => career.id === data.career);
       handleRoleChange(data.role || ''); // Llama a handleRoleChange con el rol recibido
+      console.log(data);
       setFormData({
         ...formData,
         name: data.name || '',
@@ -256,9 +254,8 @@ export default function Users() {
         username: data.username || '',
         role: data.role || '',
         password: '', // No se debe rellenar el campo de contraseña
-        is_active: data.is_active || '',
         birthdate: birthdate,
-        career: data.career || '',
+        career: career ? career.id.toString() : '', 
         studies_degree: data.studies_degree || ''
       });
       setIsEditing(false);
@@ -329,7 +326,7 @@ export default function Users() {
           <Input isRequired label="A materno" placeholder="Ej. Robles" variant="bordered" isDisabled={!isEditing} name="mother_last_name" value={formData.mother_last_name} onChange={handleInputChange} errorMessage={errors.mother_last_name} isInvalid={!!errors.mother_last_name} />
           <Input isRequired label="Email" placeholder="juan.perez@example.com" type="email" variant="bordered" isDisabled={!isEditing} name="email" value={formData.email} onChange={handleInputChange} errorMessage={errors.email} isInvalid={!!errors.email} />
           <Input isRequired label="Nombre Usuario" placeholder="juanito" variant="bordered" isDisabled={!isEditing} name="username" value={formData.username} onChange={handleInputChange} errorMessage={errors.username} isInvalid={!!errors.username} />
-          <Input isRequired label="Password" placeholder="••••••••" type="password" variant="bordered" isDisabled={!isEditing} name="password" value={formData.password} onChange={handleInputChange} errorMessage={errors.password} isInvalid={!!errors.password} />
+          <Input isRequired = {!hasSearched} label="Password" placeholder="••••••••" type="password" variant="bordered" isDisabled={!isEditing} name="password" value={formData.password} onChange={handleInputChange} errorMessage={errors.password} isInvalid={!!errors.password} />
           <Select
             label="Perfil"
             isRequired
@@ -352,25 +349,6 @@ export default function Users() {
           </Select>
           {role === 'student' && (
             <>
-              <Select
-                label="Estado"
-                isRequired
-                placeholder="Selecciona un Estado"
-                onChange={(e) => handleInputChange({ target: { name: 'is_active', value: e.target.value } })}
-                variant="bordered"
-                errorMessage={errors.is_active}
-                isInvalid={!!errors.is_active}
-                className="bg-transparent text-white rounded-md"
-                isDisabled={!isEditing}
-                name="is_active"
-                selectedKeys={new Set([formData.is_active])}
-              >
-                {status.map((status) => (
-                  <SelectItem key={status.key} value={status.key}>
-                    {status.label}
-                  </SelectItem>
-                ))}
-              </Select>
               <DateInput isRequired label="Fecha de nacimiento" placeholderValue={new CalendarDate(2000, 1, 1)} variant="bordered" className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="birthdate" value={formData.birthdate} onChange={handleDateChange} errorMessage={errors.birthdate} isInvalid={!!errors.birthdate} />
               <Select
                 label="Carrera"
@@ -383,7 +361,6 @@ export default function Users() {
                 className="bg-transparent text-white rounded-md"
                 isDisabled={!isEditing}
                 name="career"
-                value={formData.career}
                 selectedKeys={new Set([formData.career])} // Selecciona la key de la carrera recibida desde el backend
               >
                 {careers.map((career) => (
@@ -406,7 +383,6 @@ export default function Users() {
                 className="bg-transparent text-white rounded-md"
                 isDisabled={!isEditing}
                 name="career"
-                value={formData.career}
                 selectedKeys={new Set([formData.career])} // Selecciona la key de la carrera recibida desde el backend
 
               >
