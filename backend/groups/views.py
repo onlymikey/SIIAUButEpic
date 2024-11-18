@@ -7,6 +7,8 @@ from schedules.models import Schedule
 from rest_framework import status, generics
 from classrooms.models import Classroom
 from schedules.serializers import ScheduleSerializer
+from auth_custom.permissions import IsCareerAdmin
+from rest_framework.permissions import IsAuthenticated
 
 
 # Vista para listar todos los grupos
@@ -14,10 +16,23 @@ class GroupListCreateView(generics.ListCreateAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+    # Sobrescribimos los permisos solo para creacion
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            # solo career_admin puede crear carreras
+            return [IsCareerAdmin()]
+        return [IsAuthenticated()]
+
 # Vista para obtener, actualizar y eliminar un solo grupo
 class GroupDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            # Solo career_admin puede actualizar o eliminar usuarios
+            return [IsCareerAdmin()]
+        return [IsAuthenticated()]
 
 # Vista para obtener el próximo ID de la tabla groups_group
 class GroupNextIdView(APIView):

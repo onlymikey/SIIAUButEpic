@@ -8,6 +8,8 @@ from groups.models import Group
 from auth_custom.models import CustomUser
 from django.db import connection
 from schedules.models import Schedule
+from auth_custom.permissions import IsCareerAdmin
+from rest_framework.permissions import IsAuthenticated
 
 
 # vista para listar o crear todos los grupos
@@ -15,10 +17,23 @@ class EnrollmentListCreateView(generics.ListCreateAPIView):
     queryset = Enrollment.objects.all()
     serializer_class = EnrollmentSerializer
 
+    # Sobrescribimos los permisos solo para creacion
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            # solo career_admin puede crear carreras
+            return [IsCareerAdmin()]
+        return [IsAuthenticated()]
+
 # Vista para obtener, actualizar y eliminar un solo grupo
 class EnrollmentDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Enrollment.objects.all()
     serializer_class = EnrollmentSerializer
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            # Solo career_admin puede actualizar o eliminar usuarios
+            return [IsCareerAdmin()]
+        return [IsAuthenticated()]
 
     def perform_destroy(self, instance):
         group = instance.group

@@ -9,22 +9,97 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 from django.db import connection
+from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import PermissionDenied
+from .permissions import IsCareerAdmin
 
 class CustomUserListCreateView(generics.ListCreateAPIView):
-    queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(is_active=True)
     
     # Sobrescribimos los permisos solo para esta vista
     def get_permissions(self):
         if self.request.method == 'POST':
-            # Permitimos cualquier acceso para la creación de usuarios
-            return [AllowAny()]
+            # solo career_admin puede crear usuarios
+            return [IsCareerAdmin()]
         return [IsAuthenticated()]
 
 class CustomUserDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticated]  # Solo usuarios autenticados
+    
+    def get_queryset(self):
+        return CustomUser.objects.filter(is_active=True)
+    
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            # Solo career_admin puede actualizar o eliminar usuarios
+            return [IsCareerAdmin()]
+        return [IsAuthenticated()]
+    
+    def perform_update(self, serializer):
+        # Validamos si el usuario está activo
+        instance = self.get_object()
+        if not instance.is_active:
+            raise ValidationError({"detail": "No se puede actualizar un usuario inactivo."})
+        serializer.save()
+
+class DeactivateUserView(APIView):
+    permission_classes = [IsAuthenticated]  # Solo usuarios autenticados
+
+    def patch(self, request, user_id, *args, **kwargs):
+        # Verificar si el usuario autenticado tiene el rol de career_admin
+        if request.user.role != 'career_admin':
+            raise PermissionDenied({"detail": "No tienes permiso para desactivar usuarios."})
+        
+        try:
+            # Obtener al usuario objetivo
+            user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            raise NotFound({"detail": "Usuario no encontrado."})
+
+        # Validar que el usuario no esté ya desactivado
+        if not user.is_active:
+            raise ValidationError({"detail": "El usuario ya está desactivado."})
+        
+        # Desactivar el usuario
+        user.is_active = False
+        user.save()
+
+        return Response(
+            {"detail": f"El usuario {user.username} ha sido desactivado."},
+            status=status.HTTP_200_OK
+        )
+    
+class ReactivateUserView(APIView):
+    permission_classes = [IsAuthenticated]  # Solo usuarios autenticados
+
+    def patch(self, request, user_id, *args, **kwargs):
+        # Verificar si el usuario autenticado tiene el rol de career_admin
+        if request.user.role != 'career_admin':
+            raise PermissionDenied({"detail": "No tienes permiso para reactivar usuarios."})
+        
+        try:
+            # Obtener al usuario objetivo
+            user = CustomUser.objects.get(id=user_id)
+        except CustomUser.DoesNotExist:
+            raise NotFound({"detail": "Usuario no encontrado."})
+
+        # Validar que el usuario esté desactivado antes de intentar activarlo
+        if user.is_active:
+            raise ValidationError({"detail": "El usuario ya está activo."})
+        
+        # Activar el usuario
+        user.is_active = True
+        user.save()
+
+        return Response(
+            {"detail": f"El usuario {user.username} ha sido reactivado."},
+            status=status.HTTP_200_OK
+        )
 
 class CustomUserLoginView(APIView):
     permission_classes = [AllowAny]  # Permitimos cualquier acceso

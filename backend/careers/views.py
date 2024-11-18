@@ -4,16 +4,31 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Career
 from .serializers import CareerSerializer
+from auth_custom.permissions import IsCareerAdmin
+from rest_framework.permissions import IsAuthenticated
 
 # Vista para listar todos los careers
 class CareerListCreateView(generics.ListCreateAPIView):
     queryset = Career.objects.all()
     serializer_class = CareerSerializer
 
+    # Sobrescribimos los permisos solo para creacion
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            # solo career_admin puede crear carreras
+            return [IsCareerAdmin()]
+        return [IsAuthenticated()]
+
 # Vista para obtener, actualizar y eliminar un solo career
 class CareerDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Career.objects.all()
     serializer_class = CareerSerializer
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            # Solo career_admin puede actualizar o eliminar usuarios
+            return [IsCareerAdmin()]
+        return [IsAuthenticated()]
 
 # vista para obtener el siguiente id de la carrera (del registro en caso de que se desee crear)
 class CareerNextIdView(generics.ListCreateAPIView):
