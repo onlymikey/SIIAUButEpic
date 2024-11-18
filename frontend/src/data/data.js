@@ -3,8 +3,3 @@ export const roles = [
     { key: "student", label: "Alumno" },
     { key: "teacher", label: "Maestro" }
   ];
-
-export const status = [
-  { key: 0, label: "Activo" },
-  { key: 1, label: "Inactivo" },
-]
