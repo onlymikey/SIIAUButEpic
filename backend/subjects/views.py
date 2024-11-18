@@ -4,16 +4,31 @@ from .serializers import SubjectSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import connection
+from auth_custom.permissions import IsCareerAdmin
+from rest_framework.permissions import IsAuthenticated
 
 # Vista para listar todas las materias
 class SubjectListCreateView(generics.ListCreateAPIView):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
 
+    # Sobrescribimos los permisos solo para creacion
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            # solo career_admin puede crear carreras
+            return [IsCareerAdmin()]
+        return [IsAuthenticated()]
+
 # Vista para obtener, actualizar y eliminar una sola materia
 class SubjectDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            # Solo career_admin puede actualizar o eliminar usuarios
+            return [IsCareerAdmin()]
+        return [IsAuthenticated()]
 
 # Vista para obtener el próximo ID de la tabla subjects_subject
 class SubjectNextIdView(APIView):

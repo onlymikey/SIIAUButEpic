@@ -23,7 +23,7 @@ class CustomUserListCreateView(generics.ListCreateAPIView):
     # Sobrescribimos los permisos solo para esta vista
     def get_permissions(self):
         if self.request.method == 'POST':
-            # Permitimos cualquier acceso para la creación de usuarios
+            # solo career_admin puede crear usuarios
             return [IsCareerAdmin()]
         return [IsAuthenticated()]
 

@@ -4,16 +4,31 @@ from .serializers import ClassroomSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db import connection
+from auth_custom.permissions import IsCareerAdmin
+from rest_framework.permissions import IsAuthenticated
 
 # Vista para listar todos los salones
 class ClassroomListCreateView(generics.ListCreateAPIView):
     queryset = Classroom.objects.all()
     serializer_class = ClassroomSerializer
 
+    # Sobrescribimos los permisos solo para creacion
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            # solo career_admin puede crear carreras
+            return [IsCareerAdmin()]
+        return [IsAuthenticated()]
+
 # Vista para obtener, actualizar y eliminar un solo salon
 class ClassroomDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Classroom.objects.all()
     serializer_class = ClassroomSerializer
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            # Solo career_admin puede actualizar o eliminar usuarios
+            return [IsCareerAdmin()]
+        return [IsAuthenticated()]
 
 # Vista para obtener el siguiente ID que se usará en la tabla classroom.
 class ClassroomNextIdView(APIView):
