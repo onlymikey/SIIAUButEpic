@@ -220,6 +220,36 @@ status:401
 
 
 
+**************************************************users/<int:user_id>/deactivate/*******************************************************************
+método: PATCH
+descripción: Solo como admin_career, puedes dar de baja un user.
+body json: empty
+Respuesta para este request:
+{
+    "detail": "El usuario usuario_prueba ha sido desactivado."
+}
+status: 200
+
+
+
+
+
+
+**************************************************users/<int:user_id>/reactivate/*******************************************************************
+método: PATCH
+descripción: Solo como admin_career, puedes dar de alta un user.
+body json: empty
+Respuesta para este request:
+{
+    "detail": "El usuario usuario_prueba ha sido reactivado."
+}
+status: 200
+
+
+
+
+
+
 
 *****************************************************************
 *********                                       *****************
