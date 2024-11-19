@@ -36,6 +36,16 @@ api.interceptors.request.use(async config => {
     return config;
 });
 
+export const getUserGroups = async (userId) => {
+    try {
+        const response = await api.get(`/enrollments/user/${userId}/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener los grupos del usuario:', error);
+        throw error;
+    }
+};
+
 export const getCareers = async () => {
     try {
       const response = await api.get('/careers/');
