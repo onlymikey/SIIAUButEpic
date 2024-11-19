@@ -10,6 +10,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import DashboardStudents from "./components/DashboardStudents";
 import AcademicOffer from "./components/AcademicPrograms";
 import RegistrarMaterias from "./components/EnrollCourses";  
+import Classroom from "./components/Classroom"; 
 
 export default function App() {
   const userRole = 'admin';
@@ -34,6 +35,7 @@ export default function App() {
                     <Route path="/DashboardStudents" element={<DashboardStudents />} />
                     <Route path="/AcademicsPrograms" element={<AcademicOffer />} />
                     <Route path="/EnrollCourses" element={<RegistrarMaterias />} />
+                    <Route path="/Classroom" element={<Classroom />} />
 
                   </Routes>
                 </div>

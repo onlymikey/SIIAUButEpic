@@ -8,8 +8,26 @@ import {
   MdLogin,
   MdNotificationImportant,
 } from "react-icons/md";
+import { getUserGroups } from '../services/api';
 
 const DashboardStudents = () => {
+  const [schedules, setSchedules] = useState([]);
+
+  useEffect(() => {
+    const fetchUserGroups = async () => {
+      try {
+        const userId = localStorage.getItem('userId'); // Asegúrate de tener el userId almacenado en localStorage
+        const groups = await getUserGroups(userId);
+        const allSchedules = groups.flatMap(group => group.schedules);
+        setSchedules(allSchedules);
+      } catch (error) {
+        console.error('Error al obtener los grupos del usuario:', error);
+      }
+    };
+
+    fetchUserGroups();
+  }, []);
+
   return (
     <div className="p-10 max-w-6xl mx-auto bg-gray-900 bg-opacity-90 backdrop-blur-lg rounded-lg">
       {/* Título del Dashboard */}
@@ -48,11 +66,17 @@ const DashboardStudents = () => {
                 {["07:00-09:00", "09:00-11:00", "11:00-13:00", "13:00-15:00"].map((hora) => (
                   <tr key={hora} className="border-b border-gray-600">
                     <td className="py-2">{hora}</td>
-                    <td>Text</td>
-                    <td>Text</td>
-                    <td>Text</td>
-                    <td>Text</td>
-                    <td>Text</td>
+                    {["L", "M", "I", "J", "V"].map((day) => (
+                      <td key={day}>
+                        {schedules
+                          .filter(schedule => schedule.day === day && schedule.start_at === hora.split('-')[0])
+                          .map(schedule => (
+                            <div key={schedule.id}>
+                              {schedule.classroom.name}
+                            </div>
+                          ))}
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
