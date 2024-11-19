@@ -9,4 +9,3 @@ class Subject(models.Model):
 
     def __str__(self):
         return f'nombre: {self.name}, carrera: {self.career.name}'
-    
