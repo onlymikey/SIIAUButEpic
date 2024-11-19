@@ -86,4 +86,56 @@ export const updateUser = async (id, userData) => {
     }
 };
 
+// Función para desactivar un usuario
+export const deactivateUser = async (id) => {
+    try {
+        const response = await api.patch(`/users/${id}/deactivate/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error al desactivar el usuario:', error);
+        throw error;
+    }
+};
+
+// Funciones para manejar las materias (subjects)
+export const getSubjectById = async (id) => {
+    try {
+        const response = await api.get(`/subjects/${id}/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener la materia:', error);
+        throw error;
+    }
+};
+
+export const createSubject = async (subjectData) => {
+    try {
+        const response = await api.post('/subjects/', subjectData);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al crear la materia:', error);
+        throw error;
+    }
+};
+
+export const updateSubject = async (id, subjectData) => {
+    try {
+        const response = await api.put(`/subjects/${id}/`, subjectData);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al actualizar la materia:', error);
+        throw error;
+    }
+};
+
+export const deleteSubject = async (id) => {
+    try {
+        const response = await api.delete(`/subjects/${id}/`);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al eliminar la materia:', error);
+        throw error;
+    }
+};
+
 export default api;

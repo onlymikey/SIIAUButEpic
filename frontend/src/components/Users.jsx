@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button, Select, Input, SelectItem, DateInput, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'; // Importa los componentes necesarios de NextUI
 import { CalendarDate } from '@internationalized/date'; // Importa CalendarDate
 import { roles } from '../data/data'; // Importa los roles predefinidos
-import api, { getCareers, getUserById, createUser, updateUser } from '../services/api'; // Importa el cliente HTTP y la función getCarreras
+import api, { getCareers, getUserById, createUser, updateUser, deactivateUser } from '../services/api'; // Importa el cliente HTTP y la función getCarreras
 
 export default function Users() {
   // Arreglar esto más adelante:    vvvvv
@@ -30,6 +30,8 @@ export default function Users() {
   const [popoverTarget, setPopoverTarget] = useState(null); // Estado para el objetivo del popover
   const popoverRef = useRef(null); // Referencia al popover
   const [isNew, setIsNew] = useState(false);
+  const [confirmDeactivate, setConfirmDeactivate] = useState(false);
+  const [deactivateTimeout, setDeactivateTimeout] = useState(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -81,8 +83,14 @@ export default function Users() {
         email: formData.email,
         role: formData.role,
         username: formData.username,
-        password: formData.password
     };
+
+      if (!hasSearched){
+        data={
+          ...data,
+          password: formData.password,
+        }
+      }
 
       if (role === 'teacher') {
         data = {
@@ -194,18 +202,18 @@ export default function Users() {
       return rest;
     });
   };
-  //Maneja el evento de nuevo
+
   const handleNew = () => {
     setIsEditing(true);
     setIsNew(true);
   };
 
   const handleEdit = () => {
-    setIsEditing(true); // Activa el estado de edición
+    setIsEditing(true); 
   };
 
 
-  //Maneja el evento de cancelar
+ 
   const handleCancel = () => {
     setIsEditing(false);
     setHasSearched(false);
@@ -220,7 +228,7 @@ export default function Users() {
       role: formData.role,
       password: '',
       is_active: '',
-      birthdate: new CalendarDate(2000, 1, 1), // Restablece a una fecha válida
+      birthdate: new CalendarDate(2000, 1, 1), 
       career: '',
       studies_degree: ''
     });
@@ -275,6 +283,44 @@ export default function Users() {
   }
 };
 
+  // Función para desactivar un usuario
+  const handleDeactivate = async () => {
+  if (!confirmDeactivate) {
+    setPopoverContent('¿Estás seguro de querer desactivar este usuario? Esto podría tener repercusiones en su agenda de materias y carrera. Si estás seguro, pulsa el botón otra vez.');
+    setPopoverTarget('deactivate');
+    setShowPopover(true);
+    setConfirmDeactivate(true);
+
+    // Establecer un temporizador para restablecer la confirmación después de 10 segundos
+    const timeout = setTimeout(() => {
+      setConfirmDeactivate(false);
+    }, 10000);
+    setDeactivateTimeout(timeout);
+    return;
+  }
+
+  // Si se confirma la desactivación, proceder con la desactivación del usuario
+  setLoading(true);
+  try {
+    await deactivateUser(formData.id);
+    setPopoverContent('Usuario desactivado correctamente');
+    setPopoverTarget('deactivate');
+    handleCancel();
+    setShowPopover(true);
+    setTimeout(() => setShowPopover(false), 10000);
+  } catch (error) {
+    console.error('Error al desactivar el usuario:', error);
+    setPopoverContent('Error al desactivar el usuario');
+    setPopoverTarget('deactivate');
+    setShowPopover(true);
+    setTimeout(() => setShowPopover(false), 10000);
+  } finally {
+    setLoading(false);
+    setConfirmDeactivate(false);
+    clearTimeout(deactivateTimeout);
+  }
+};
+
   const handlePopoverChange = (isOpen) => {
     setShowPopover(isOpen);
     if (!isOpen) {
@@ -313,8 +359,24 @@ export default function Users() {
                 </PopoverContent>
                 </Popover>
                 <Button color="secondary" variant="flat" isDisabled={!hasSearched || isEditing} onClick={handleEdit}>Editar</Button>
-              <Button color="danger" variant="flat" isDisabled={!hasSearched || isEditing}>Baja</Button>
-            </div>
+                <Popover placement="bottom" showArrow={true} isOpen={showPopover && popoverTarget === 'deactivate'} onOpenChange={handlePopoverChange}>
+                    <PopoverTrigger>
+                      <Button color="danger" variant="flat" isDisabled={!hasSearched || isEditing} onClick={handleDeactivate}>Baja</Button>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      {(titleProps) => (
+                        <div className="px-1 py-2">
+                          <h3 className="text-small font-bold" {...titleProps}>
+                            Confirmación
+                          </h3>
+                          <div className="text-tiny">
+                            {popoverContent}
+                          </div>
+                        </div>
+                      )}
+                    </PopoverContent>
+                  </Popover>
+                </div>
           </div>
         </div>
 
