@@ -365,6 +365,46 @@ status:200
 
 
 
+
+************************************************careers/<int:career_id>/subjects/**************************************************************
+método: GET
+descripción: Obtienes las materias relacionadas a una carrera.
+body JSON: empty
+respuesta para este request:
+[
+    {
+        "id": 1,
+        "credits": 8,
+        "semester": 4,
+        "name": "Calculo",
+        "career": 1
+    },
+    {
+        "id": 2,
+        "credits": 10,
+        "semester": 15,
+        "name": "Espacios Vectoriales",
+        "career": 1
+    },
+    {
+        "id": 3,
+        "credits": 10,
+        "semester": 10,
+        "name": "Sexo anal",
+        "career": 1
+    }
+]
+status:200
+
+
+
+
+
+
+
+
+
+
 *****************************************************************
 *********                                       *****************
 *********                CLASSROOMS             *****************

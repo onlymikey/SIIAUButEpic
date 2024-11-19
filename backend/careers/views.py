@@ -6,6 +6,9 @@ from .models import Career
 from .serializers import CareerSerializer
 from auth_custom.permissions import IsCareerAdmin
 from rest_framework.permissions import IsAuthenticated
+from subjects.models import Subject
+from subjects.serializers import SubjectSerializer
+
 
 # Vista para listar todos los careers
 class CareerListCreateView(generics.ListCreateAPIView):
@@ -52,3 +55,17 @@ class CareerNextIdView(APIView):
             if(auto_increment_value == None):
                 auto_increment_value = 1
         return auto_increment_value
+
+# vista para obtener las materias segun una carrera.
+class SubjectsByCareerView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, career_id, *args, **kwargs):
+        subjects = Subject.objects.filter(career_id=career_id)
+        if not subjects.exists():
+            return Response(
+                {"detail": "No se encontraron materias para esta carrera."},
+                status=404
+            )
+        serializer = SubjectSerializer(subjects, many=True)
+        return Response(serializer.data)
