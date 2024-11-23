@@ -98,6 +98,17 @@ export const deactivateUser = async (id) => {
 };
 
 // Funciones para manejar las materias (subjects)
+export const getSubjects = async () => {
+    try {
+        const response = await api.get('/subjects/');
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener las materias:', error);
+        throw error;
+    }
+};
+
+
 export const getSubjectById = async (id) => {
     try {
         const response = await api.get(`/subjects/${id}/`);
@@ -134,6 +145,139 @@ export const deleteSubject = async (id) => {
         return response; // Devolver la respuesta completa
     } catch (error) {
         console.error('Error al eliminar la materia:', error);
+        throw error;
+    }
+};
+
+// Funciones para manejar las aulas (classrooms)
+export const getClassrooms = async () => {
+    try {
+        const response = await api.get('/classrooms/');
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener las aulas:', error);
+        throw error;
+    }
+};
+
+export const getClassroomById = async (id) => {
+    try {
+        const response = await api.get(`/classrooms/${id}/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener el aula:', error);
+        throw error;
+    }
+};
+
+export const createClassroom = async (classroomData) => {
+    try {
+        const response = await api.post('/classrooms/', classroomData);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al crear el aula:', error);
+        throw error;
+    }
+};
+
+export const updateClassroom = async (id, classroomData) => {
+    try {
+        const response = await api.put(`/classrooms/${id}/`, classroomData);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al actualizar el aula:', error);
+        throw error;
+    }
+};
+
+export const deleteClassroom = async (id) => {
+    try {
+        const response = await api.delete(`/classrooms/${id}/`);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al eliminar el aula:', error);
+        throw error;
+    }
+};
+
+// Funciones para manejar las carreras (careers)
+export const getCareerById = async (id) => {
+    try {
+        const response = await api.get(`/careers/${id}/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener la carrera:', error);
+        throw error;
+    }
+};
+
+export const createCareer = async (careerData) => {
+    try {
+        const response = await api.post('/careers/', careerData);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al crear la carrera:', error);
+        throw error;
+    }
+};
+
+export const updateCareer = async (id, careerData) => {
+    try {
+        const response = await api.put(`/careers/${id}/`, careerData);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al actualizar la carrera:', error);
+        throw error;
+    }
+};
+
+export const deleteCareer = async (id) => {
+    try {
+        const response = await api.delete(`/careers/${id}/`);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al eliminar la carrera:', error);
+        throw error;
+    }
+};
+
+// Funciones para manejar los grupos (groups)
+export const getGroupById = async (id) => {
+    try {
+        const response = await api.get(`/groups/${id}/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener el grupo:', error);
+        throw error;
+    }
+};
+
+export const createGroup = async (groupData) => {
+    try {
+        const response = await api.post('/groups/', groupData);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al crear el grupo:', error);
+        throw error;
+    }
+};
+
+export const updateGroup = async (id, groupData) => {
+    try {
+        const response = await api.put(`/groups/${id}/`, groupData);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al actualizar el grupo:', error);
+        throw error;
+    }
+};
+
+export const deleteGroup = async (id) => {
+    try {
+        const response = await api.delete(`/groups/${id}/`);
+        return response; // Devolver la respuesta completa
+    } catch (error) {
+        console.error('Error al eliminar el grupo:', error);
         throw error;
     }
 };
