@@ -251,6 +251,72 @@ status: 200
 
 
 
+**************************************************teachers/*******************************************************************
+método: GET
+descripción: Obtener todos los maestros
+body json: empty
+Respuesta para este request:
+[
+    {
+        "id": 5,
+        "username": "holaHola",
+        "birthdate": "10/10/2024",
+        "email": "holaHola@mundo.com",
+        "name": "Lola",
+        "studies_degree": "Doctorado",
+        "father_last_name": "Palma",
+        "mother_last_name": "Lopez",
+        "role": "teacher",
+        "career": 1
+    },
+    {
+        "id": 6,
+        "username": "Palma",
+        "birthdate": "10/10/2024",
+        "email": "pal@mundo.com",
+        "name": "Lola",
+        "studies_degree": "Doctorado",
+        "father_last_name": "Palma",
+        "mother_last_name": "Lopez",
+        "role": "teacher",
+        "career": 1
+    },
+    {
+        "id": 7,
+        "username": "Nobody",
+        "birthdate": "10/10/2024",
+        "email": "no@mundo.com",
+        "name": "Lola",
+        "studies_degree": "Doctorado",
+        "father_last_name": "Palma",
+        "mother_last_name": "Lopez",
+        "role": "teacher",
+        "career": 1
+    },
+    {
+        "id": 8,
+        "username": "PalNorte",
+        "birthdate": "10/10/2024",
+        "email": "Pape@mundo.com",
+        "name": "Lola",
+        "studies_degree": "Doctorado",
+        "father_last_name": "Palma",
+        "mother_last_name": "Lopez",
+        "role": "teacher",
+        "career": 1
+    }
+]
+status: 200
+
+
+
+
+
+
+
+
+
+
 *****************************************************************
 *********                                       *****************
 *********                CAREERS                *****************
