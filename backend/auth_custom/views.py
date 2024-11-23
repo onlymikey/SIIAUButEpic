@@ -142,3 +142,12 @@ class UserNextIdView(APIView):
             if(auto_increment_value == None):
                 auto_increment_value = 1
         return auto_increment_value
+
+# Vista para obtener los usuarios con rol de teacher (activos)
+class TeacherListView(generics.ListAPIView):
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]  # Solo usuarios autenticados
+
+    def get_queryset(self):
+        return CustomUser.objects.filter(is_active=True, role='teacher')
+    

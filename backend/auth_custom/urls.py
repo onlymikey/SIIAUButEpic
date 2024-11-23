@@ -5,7 +5,8 @@ from .views import (
     CustomUserLoginView,
     UserNextIdView,
     DeactivateUserView,
-    ReactivateUserView
+    ReactivateUserView,
+    TeacherListView
     )
 
 urlpatterns = [
@@ -15,5 +16,5 @@ urlpatterns = [
     path('users/<int:user_id>/deactivate/', DeactivateUserView.as_view(), name='users-deactivate'),  # Desactivar usuario
     path('users/<int:user_id>/reactivate/', ReactivateUserView.as_view(), name='users-reactivate'),  # Reactivar usuario
     path('login/', CustomUserLoginView.as_view(), name='login'),  # Login
-
+    path('teachers/', TeacherListView.as_view(), name='teachers-list'),  # Listar profesores
 ]
