@@ -920,7 +920,7 @@ Body JSON:
     "end_date": "15-01-2025", (formato:DD-MM-YYYY)
     "subject": 1,
     "teacher": 2,
-    "semester": "2024B", (semestre no debe ser menor a fecha inicio)
+    "study_period": "2024B", (periodo de estudio no debe ser menor a fecha inicio)
     "max_students": 30,
     "schedule1": {
         "day": "Monday",
