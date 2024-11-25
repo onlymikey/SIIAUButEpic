@@ -2,9 +2,11 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from django.db import connection, transaction, models
+from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from .serializers import GroupSerializer
+from django.db.models import Prefetch
 from .models import Group
 from schedules.models import Schedule
 from rest_framework import status, generics
@@ -15,20 +17,133 @@ from rest_framework.permissions import IsAuthenticated
 
 
 # Vista para listar todos los grupos (solo GET)
-class GroupListView(ListAPIView):
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+class GroupListView(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            # Prefetch schedules relacionados para optimizar consultas
+            groups = Group.objects.prefetch_related(
+                Prefetch('schedule_set', queryset=Schedule.objects.all())
+            ).all()
 
-# Vista para obtener, actualizar y eliminar un solo grupo
-class GroupDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+            # Serializar los datos de los grupos junto con los horarios
+            data = []
+            for group in groups:
+                group_data = GroupSerializer(group).data
+                schedules = Schedule.objects.filter(group=group)
+                group_data['schedules'] = ScheduleSerializer(schedules, many=True).data
+                data.append(group_data)
 
-    def get_permissions(self):
-        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
-            # Solo career_admin puede actualizar o eliminar usuarios
-            return [IsCareerAdmin()]
-        return [IsAuthenticated()]
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+# Vista para obtener un grupo específico con sus horarios relacionados
+class GroupDetailWithSchedulesView(APIView):
+    """
+    Vista para obtener un grupo específico con sus horarios relacionados.
+    """
+    def get(self, request, group_id, *args, **kwargs):
+        # Obtén el grupo por su ID o devuelve 404 si no existe
+        group = get_object_or_404(Group, id=group_id)
+        
+        # Serializa el grupo
+        group_serializer = GroupSerializer(group)
+        
+        # Obtén los horarios relacionados
+        schedules = Schedule.objects.filter(group=group)
+        schedule_serializer = ScheduleSerializer(schedules, many=True)
+        
+        # Construye la respuesta
+        response_data = group_serializer.data
+        response_data['schedules'] = schedule_serializer.data
+
+        return Response(response_data, status=status.HTTP_200_OK)
+    
+class GroupDeleteView(APIView):
+    """
+    Vista para eliminar un grupo y sus horarios relacionados.
+    """
+    def delete(self, request, group_id, *args, **kwargs):
+        # Obtén el grupo por su ID o devuelve 404 si no existe
+        group = get_object_or_404(Group, id=group_id)
+
+        try:
+            with transaction.atomic():
+                # Elimina los horarios relacionados
+                Schedule.objects.filter(group=group).delete()
+                
+                # Elimina el grupo
+                group.delete()
+                
+            return Response(
+                {"message": f"Grupo con ID {group_id} y sus horarios relacionados fueron eliminados."},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+# Vista para actualizar un grupo y sus horarios relacionados
+class GroupUpdateView(APIView):
+    """
+    Vista para actualizar un grupo y sus horarios relacionados.
+    """
+
+    def put(self, request, group_id, *args, **kwargs):
+        return self.update_group(request, group_id, partial=False)
+
+    def patch(self, request, group_id, *args, **kwargs):
+        return self.update_group(request, group_id, partial=True)
+
+    def update_group(self, request, group_id, partial):
+        # Obtén el grupo por su ID o devuelve 404 si no existe
+        group = get_object_or_404(Group, id=group_id)
+
+        try:
+            with transaction.atomic():
+                # Actualizar el grupo
+                group_serializer = GroupSerializer(group, data=request.data, partial=partial)
+                if not group_serializer.is_valid():
+                    return Response(group_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                group = group_serializer.save()
+
+                # Actualizar los horarios relacionados (si se proporcionan en la solicitud)
+                if "schedules" in request.data:
+                    schedules_data = request.data["schedules"]
+
+                    # Eliminar horarios antiguos (opcional, según tu lógica)
+                    Schedule.objects.filter(group=group).delete()
+
+                    # Crear o actualizar los nuevos horarios
+                    for schedule_data in schedules_data:
+                        schedule_data["group"] = group.id  # Asociar al grupo
+                        schedule_serializer = ScheduleSerializer(data=schedule_data)
+                        if not schedule_serializer.is_valid():
+                            return Response(schedule_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                        schedule_serializer.save()
+
+                # Obtener los horarios actualizados del grupo
+                updated_schedules = Schedule.objects.filter(group=group)
+                updated_schedules_serializer = ScheduleSerializer(updated_schedules, many=True)
+
+                # Responder con el grupo y sus horarios actualizados
+                return Response(
+                    {
+                        "message": "Grupo y horarios actualizados correctamente.",
+                        "group": group_serializer.data,
+                        "schedules": updated_schedules_serializer.data
+                    },
+                    status=status.HTTP_200_OK
+                )
+
+        except Exception as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 # Vista para obtener el próximo ID de la tabla groups_group
 class GroupNextIdView(APIView):

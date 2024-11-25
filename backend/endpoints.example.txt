@@ -783,97 +783,69 @@ Body JSON: empty
 Respuesta para este request:
 [
     {
-        "id": 1,
-        "name": "A101",
-        "start_date": "15-11-2024",
+        "id": 15,
+        "name": "A103",
+        "start_date": "15-01-2024",
         "end_date": "15-01-2025",
+        "study_period": "2024B",
+        "quantity_students": 0,
+        "max_students": 30,
         "subject": 1,
         "teacher": 2,
-        "semester": "2024B",
-        "quantity_students": 0,
-        "max_students": 30
+        "schedules": [
+            {
+                "id": 9,
+                "day": "lunes",
+                "start_at": "08:00:00",
+                "end_at": "10:00:00",
+                "group": 15,
+                "classroom": 1
+            },
+            {
+                "id": 10,
+                "day": "miércoles",
+                "start_at": "08:00:00",
+                "end_at": "10:00:00",
+                "group": 15,
+                "classroom": 1
+            }
+        ]
     },
     {
-        "id": 2,
-        "name": "B202",
-        "start_date": "01-12-2024",
-        "end_date": "01-02-2025",
-        "subject": 2,
-        "teacher": 3,
-        "semester": "2024B",
-        "quantity_students": 25,
-        "max_students": 30
+        "id": 16,
+        "name": "A101",
+        "start_date": "15-01-2024",
+        "end_date": "15-01-2025",
+        "study_period": "2024B",
+        "quantity_students": 0,
+        "max_students": 30,
+        "subject": 1,
+        "teacher": 2,
+        "schedules": [
+            {
+                "id": 11,
+                "day": "martes",
+                "start_at": "08:00:00",
+                "end_at": "10:00:00",
+                "group": 16,
+                "classroom": 1
+            },
+            {
+                "id": 12,
+                "day": "jueves",
+                "start_at": "08:00:00",
+                "end_at": "10:00:00",
+                "group": 16,
+                "classroom": 1
+            }
+        ]
     }
 ]
-
 status: 200
 
 
 
-************************************************groups/int:PK/**************************************************************
-Método: GET  
-Descripción: Obtiene un grupo en específico.
-Endpoint Example: groups/1/
-Body JSON: empty
-Respuesta para este request:
-{
-    "id": 1,
-    "name": "A101",
-    "start_date": "15-11-2024",
-    "end_date": "15-01-2025",
-    "subject": 1,
-    "teacher": 2,
-    "semester": "2024B",
-    "quantity_students": 0,
-    "max_students": 30
-}
-status: 200
 
-
-
-************************************************groups/int:PK/**************************************************************
-Método: PUT  
-Descripción: Edita un grupo en específico.
-Endpoint Example: groups/1/
-Body JSON:
-{
-    "name": "C303",
-    "start_date": "20-11-2024",
-    "end_date": "20-01-2025",
-    "subject": 3,
-    "teacher": 4,
-    "semester": "2024A",
-    "max_students": 40
-}
-Respuesta para este request:
-{
-    "id": 1,
-    "name": "C303",
-    "start_date": "20-11-2024",
-    "end_date": "20-01-2025",
-    "subject": 3,
-    "teacher": 4,
-    "semester": "2024A",
-    "quantity_students": 0,
-    "max_students": 40
-}
-status: 200
-
-
-
-************************************************groups/int:PK/**************************************************************
-Método: DELETE  
-Descripción: Elimina un grupo.
-Endpoint Example: groups/1/
-Body JSON: empty
-Respuesta para este request: empty
-status: 204
-Respuesta de error para DELETE:
-{
-    "detail": "Not found."
-}
-Descripción: No se ha encontrado un grupo con ese ID.
-status: 404
 
 
 ************************************************groups/next_id/**************************************************************
@@ -919,6 +891,150 @@ Respuesta para este request:
     "group_id": 1
 }
 status: 201
+
+
+
+************************************************groups/<int:group_id>/schedules/**************************************************************
+Método: GET  
+Descripción: Obtiene un grupo con sus horarios.
+Body JSON: empty
+Respuesta para este request:
+{
+    "id": 17,
+    "name": "G001",
+    "start_date": "01-01-2024",
+    "end_date": "31-05-2024",
+    "study_period": "2024B",
+    "quantity_students": 15,
+    "max_students": 30,
+    "subject": 1,
+    "teacher": 2,
+    "schedules": [
+        {
+            "id": 15,
+            "day": "viernes",
+            "start_at": "08:00:00",
+            "end_at": "10:00:00",
+            "group": 17,
+            "classroom": 1
+        }
+    ]
+}
+status: 200
+
+
+
+
+
+************************************************groups/<int:group_id>/delete/**************************************************************
+Método: GET  
+Descripción: Borra un grupo y sus horarios.
+Body JSON: empty
+Respuesta para este request:
+{
+    "message": "Grupo con ID 1 y sus horarios relacionados fueron eliminados."
+}
+status: 204
+
+
+
+
+************************************************groups/<int:group_id>/update/**************************************************************
+Método: PUT  
+Descripción: Actualiza un grupo y sus horarios (todos los campos).
+Body JSON:
+{
+    "name": "G001",
+    "start_date": "01-01-2024",
+    "end_date": "31-05-2024",
+    "subject": 1,
+    "teacher": 2,
+    "study_period": "2024B",
+    "quantity_students": 15,
+    "max_students": 30,
+    "schedules": [
+        {
+            "classroom": 1,
+            "day": "viernes",
+            "start_at": "08:00:00",
+            "end_at": "10:00:00"
+        }
+    ]
+}
+Respuesta para este request:
+{
+    "name": "G001",
+    "start_date": "01-01-2024",
+    "end_date": "31-05-2024",
+    "subject": 1,
+    "teacher": 2,
+    "study_period": "2024B",
+    "quantity_students": 15,
+    "max_students": 30,
+    "schedules": [
+        {
+            "classroom": 1,
+            "day": "viernes",
+            "start_at": "08:00:00",
+            "end_at": "10:00:00"
+        }
+    ]
+}
+status: 200
+
+
+
+
+
+
+
+************************************************groups/<int:group_id>/update/**************************************************************
+Método: PATCH  
+Descripción: Actualiza un grupo y sus horarios (algunos datos).
+Body JSON:
+{
+    "name": "G005",
+    "schedules": [
+        {
+            "classroom": 1,
+            "day": "jueves",
+            "start_at": "14:00:00",
+            "end_at": "16:00:00"
+        }
+    ]
+}
+Respuesta para este request:
+{
+    "message": "Grupo y horarios actualizados correctamente.",
+    "group": {
+        "id": 17,
+        "name": "G005",
+        "start_date": "01-01-2024",
+        "end_date": "31-05-2024",
+        "study_period": "2024B",
+        "quantity_students": 15,
+        "max_students": 30,
+        "subject": 1,
+        "teacher": 2
+    },
+    "schedules": [
+        {
+            "id": 17,
+            "day": "jueves",
+            "start_at": "14:00:00",
+            "end_at": "16:00:00",
+            "group": 17,
+            "classroom": 1
+        }
+    ]
+}
+status: 200
+
+
+
+
+
+
 
 
 

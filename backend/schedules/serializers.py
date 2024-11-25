@@ -5,7 +5,7 @@ from .models import Schedule, Classroom
 class ScheduleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Schedule
-        fields = ['group', 'classroom', 'day', 'start_at', 'end_at']
+        fields = '__all__'
 
     def validate(self, data):
         # Verificar si el aula existe (si no lo hace, lanzamos un error)
