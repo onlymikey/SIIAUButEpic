@@ -5,15 +5,23 @@ import Users from "./components/Users";
 import Subjects from "./components/Subjects";
 import Groups from "./components/Groups";
 import Careers from "./components/Careers";
-import Dashboard from "./components/Dashboard";
 import PrivateRoute from "./components/PrivateRoute";
 import DashboardStudents from "./components/DashboardStudents";
+import Dashboard from "./components/Dashboard";
 import AcademicOffer from "./components/AcademicPrograms";
 import RegistrarMaterias from "./components/EnrollCourses";  
 import Classroom from "./components/Classroom"; 
+import { useEffect, useState } from 'react';
 
 export default function App() {
-  const userRole = 'admin';
+  const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    if (role) {
+      setUserRole(role);
+    }
+  }, []);
 
   return (
     <Router>
@@ -27,16 +35,30 @@ export default function App() {
                 <Sidebar role={userRole} />
                 <div className="flex-grow flex items-center justify-center">
                   <Routes>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/users" element={<Users />} />
-                    <Route path="/subjects" element={<Subjects />} />
-                    <Route path="/groups" element={<Groups />} />
-                    <Route path="/careers" element={<Careers />} />
-                    <Route path="/DashboardStudents" element={<DashboardStudents />} />
-                    <Route path="/AcademicsPrograms" element={<AcademicOffer />} />
-                    <Route path="/EnrollCourses" element={<RegistrarMaterias />} />
-                    <Route path="/Classroom" element={<Classroom />} />
-
+                    {userRole === 'career_admin' && (
+                      <>
+                        <Route path="/Dashboard" element={<Dashboard />} />
+                        <Route path="/users" element={<Users />} />
+                        <Route path="/subjects" element={<Subjects />} />
+                        <Route path="/groups" element={<Groups />} />
+                        <Route path="/careers" element={<Careers />} />
+                        <Route path="/AcademicsPrograms" element={<AcademicOffer />} />
+                        <Route path="/EnrollCourses" element={<RegistrarMaterias />} />
+                        <Route path="/Classroom" element={<Classroom />} />
+                      </>
+                    )}
+                    {userRole === 'student' && (
+                      <>
+                        <Route path="/DashboardStudents" element={<DashboardStudents />} />
+                        <Route path="/AcademicsPrograms" element={<AcademicOffer />} />
+                        <Route path="/EnrollCourses" element={<RegistrarMaterias />} />
+                      </>
+                    )}
+                    {userRole === 'teacher' && (
+                      <>
+                        {/* Add routes for teacher if needed */}
+                      </>
+                    )}
                   </Routes>
                 </div>
               </div>

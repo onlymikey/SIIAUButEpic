@@ -35,23 +35,25 @@ export default function LoginCard() {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await api.post('/token/', {
+            const response = await api.post('/login/', {
                 username: username,
                 password: password,
             });
 
             if (response.status === 200) {
-                const { access, refresh } = response.data;
+                const { access, refresh, user } = response.data;
                 const now = new Date();
                 const tokenExpirationDate = new Date(now.getTime() + 5 * 60 * 1000); // Asumiendo que el token expira en 5 minutos
 
-                // Guardar el token y la fecha de expiración en localStorage
+                // Guardar el token, el rol y la fecha de expiración en localStorage
                 localStorage.setItem('authToken', access);
                 localStorage.setItem('refreshToken', refresh);
                 localStorage.setItem('tokenExpiration', tokenExpirationDate.toISOString());
+                localStorage.setItem('userRole', user.role);
 
                 // Redirigir al dashboard
                 navigate('/dashboard');
+                console.log(response.data);
             } else {
                 setError({ username: true, password: true });
             }
