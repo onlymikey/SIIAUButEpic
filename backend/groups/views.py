@@ -48,20 +48,14 @@ class GroupNextIdView(APIView):
                 auto_increment_value = 1
         return auto_increment_value
 
-# Vista para crear un grupo y sus horarios
+# Vista para crear un grupo con sus horarios
 class GroupCreateView(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data
 
         group_serializer = GroupSerializer(data=data)
         if not group_serializer.is_valid():
-            return Response({
-                "error": {
-                    "code": "VALIDATION_ERROR",
-                    "message": "Datos inválidos para el grupo",
-                    "details": group_serializer.errors
-                }
-            }, status=status.HTTP_400_BAD_REQUEST)
+            return Response(group_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             with transaction.atomic():
@@ -84,35 +78,16 @@ class GroupCreateView(APIView):
                         "group_id": group.id
                     }, status=status.HTTP_201_CREATED)
 
-                raise DRFValidationError({
-                    "code": "NO_SCHEDULES_CREATED",
-                    "message": "No se crearon horarios"
-                })
+                raise DRFValidationError("No se crearon horarios.")
 
         except DjangoValidationError as e:
-            # Convertir el error a formato de respuesta JSON
-            return Response({
-                "error": {
-                    "code": "VALIDATION_ERROR",
-                    "message": "Error de validación en los datos",
-                    "details": e.message_dict if hasattr(e, 'message_dict') else str(e)
-                }
-            }, status=status.HTTP_400_BAD_REQUEST)
+            # Error de validación en Django
+            return Response(e.message_dict if hasattr(e, 'message_dict') else str(e), status=status.HTTP_400_BAD_REQUEST)
 
         except DRFValidationError as e:
-            return Response({
-                "error": {
-                    "code": "VALIDATION_ERROR",
-                    "message": "Datos inválidos",
-                    "details": e.detail  # Usar detalle del error en DRF
-                }
-            }, status=status.HTTP_400_BAD_REQUEST)
+            # Error de validación en DRF
+            return Response(e.detail, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            return Response({
-                "error": {
-                    "code": "INTERNAL_SERVER_ERROR",
-                    "message": "Ocurrió un error al procesar la solicitud",
-                    "details": str(e)
-                }
-            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            # Error genérico
+            return Response(str(e), status=status.HTTP_500_INTERNAL_SERVER_ERROR)
