@@ -1,6 +1,9 @@
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from django.db import connection, transaction, models
+from django.core.exceptions import ValidationError as DjangoValidationError
+from rest_framework.exceptions import ValidationError as DRFValidationError
 from .serializers import GroupSerializer
 from .models import Group
 from schedules.models import Schedule
@@ -11,17 +14,10 @@ from auth_custom.permissions import IsCareerAdmin
 from rest_framework.permissions import IsAuthenticated
 
 
-# Vista para listar todos los grupos
-class GroupListCreateView(generics.ListCreateAPIView):
+# Vista para listar todos los grupos (solo GET)
+class GroupListView(ListAPIView):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-
-    # Sobrescribimos los permisos solo para creacion
-    def get_permissions(self):
-        if self.request.method == 'POST':
-            # solo career_admin puede crear carreras
-            return [IsCareerAdmin()]
-        return [IsAuthenticated()]
 
 # Vista para obtener, actualizar y eliminar un solo grupo
 class GroupDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -52,12 +48,11 @@ class GroupNextIdView(APIView):
                 auto_increment_value = 1
         return auto_increment_value
 
-# Vista para crear el grupo y LOS HORARIOS (registro con relaciones a horario) con el json que se reciba en la solicitud
+# Vista para crear un grupo y sus horarios
 class GroupCreateView(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data
 
-        # Validar datos principales del grupo
         group_serializer = GroupSerializer(data=data)
         if not group_serializer.is_valid():
             return Response({
@@ -67,65 +62,53 @@ class GroupCreateView(APIView):
                     "details": group_serializer.errors
                 }
             }, status=status.HTTP_400_BAD_REQUEST)
-        
+
         try:
-            # Usar transacción atómica para que todo se maneje como una sola unidad
             with transaction.atomic():
-                # Crear el grupo
-                group = group_serializer.save(quantity_students=0)  # Inicialmente sin estudiantes
-                
+                group = group_serializer.save(quantity_students=0)
+
                 schedules = []
-                # Iterar sobre las claves "scheduleX" y crear horarios
                 for key, schedule_data in data.items():
-                    if key.startswith("schedule") and isinstance(schedule_data, dict) and schedule_data:
-                        # Añadir el ID del grupo al schedule_data
+                    if key.startswith("schedule") and isinstance(schedule_data, dict):
                         schedule_data['group'] = group.id
 
-                        # Usar el ScheduleSerializer para validar y guardar el horario
                         schedule_serializer = ScheduleSerializer(data=schedule_data)
-
                         if schedule_serializer.is_valid():
                             schedules.append(schedule_serializer.save())
                         else:
-                            raise ValueError({
-                                "code": "VALIDATION_ERROR",
-                                "message": "Datos inválidos para los horarios",
-                                "details": schedule_serializer.errors
-                            })
+                            raise DRFValidationError(schedule_serializer.errors)
 
-                # Si se crearon horarios, regresar respuesta exitosa
                 if schedules:
                     return Response({
                         "message": "Grupo y horarios creados exitosamente",
                         "group_id": group.id
                     }, status=status.HTTP_201_CREATED)
-                else:
-                    raise ValueError({
-                        "code": "NO_SCHEDULES_CREATED",
-                        "message": "No se crearon horarios",
-                        "details": {}
-                    })
 
-        except Classroom.DoesNotExist:
+                raise DRFValidationError({
+                    "code": "NO_SCHEDULES_CREATED",
+                    "message": "No se crearon horarios"
+                })
+
+        except DjangoValidationError as e:
+            # Convertir el error a formato de respuesta JSON
             return Response({
                 "error": {
-                    "code": "CLASSROOM_NOT_FOUND",
-                    "message": "El aula especificada no existe",
-                    "details": {}
+                    "code": "VALIDATION_ERROR",
+                    "message": "Error de validación en los datos",
+                    "details": e.message_dict if hasattr(e, 'message_dict') else str(e)
                 }
             }, status=status.HTTP_400_BAD_REQUEST)
 
-        except ValueError as e:
-            # Manejo de errores personalizados en el proceso de creación
-            error_data = e.args[0] if isinstance(e.args[0], dict) else {
-                "code": "UNKNOWN_ERROR",
-                "message": str(e),
-                "details": {}
-            }
-            return Response({"error": error_data}, status=status.HTTP_400_BAD_REQUEST)
+        except DRFValidationError as e:
+            return Response({
+                "error": {
+                    "code": "VALIDATION_ERROR",
+                    "message": "Datos inválidos",
+                    "details": e.detail  # Usar detalle del error en DRF
+                }
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         except Exception as e:
-            # Manejo de errores no controlados
             return Response({
                 "error": {
                     "code": "INTERNAL_SERVER_ERROR",

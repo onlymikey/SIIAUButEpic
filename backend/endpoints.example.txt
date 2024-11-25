@@ -777,28 +777,6 @@ status: 200
 *****************************************************************
 
 ************************************************groups/**************************************************************
-Método: POST  
-Descripción: Se crea un nuevo grupo junto con sus horarios.  
-Body JSON:
-{
-    "name": "A101",
-    "start_date": "15-11-2024", (formato:DD-MM-YYYY, fecha inicio<fecha fin)
-    "end_date": "15-01-2025", (formato:DD-MM-YYYY)
-    "subject": 1,
-    "teacher": 2,
-    "semester": "2024B", (semestre no debe ser menor a fecha inicio)
-    "max_students": 30
-}
-Respuesta para este request:
-{
-    "message": "Grupo creado exitosamente",
-    "group_id": 1
-}
-status: 201
-
-
-
-************************************************groups/**************************************************************
 Método: GET  
 Descripción: Obtener todos los grupos. 
 Body JSON: empty
@@ -916,22 +894,22 @@ Descripción: Crea un grupo y sus horarios.
 Body JSON:
 {
     "name": "A101",
-    "start_date": "15-11-2024", (formato:DD-MM-YYYY, fecha inicio<fecha fin)
-    "end_date": "15-01-2025", (formato:DD-MM-YYYY)
+    "start_date": "15-11-2024",
+    "end_date": "15-01-2025",
     "subject": 1,
     "teacher": 2,
-    "study_period": "2024B", (periodo de estudio no debe ser menor a fecha inicio)
+    "study_period": "2024B",
     "max_students": 30,
     "schedule1": {
-        "day": "Monday",
-        "start_time": "08:00", (no puede ser menor a 07:00)
-        "end_time": "10:00", (no puede ser mayor a 19:00)
+        "day": "lunes",
+        "start_at": "08:00",
+        "end_at": "10:00",
         "classroom": 1
     },
     "schedule2": {
-        "day": "Wednesday",
-        "start_time": "08:00", (no puede ser menor a 07:00)
-        "end_time": "10:00", (no puede ser mayor a 19:00)
+        "day": "miércoles",
+        "start_at": "08:00",
+        "end_at": "10:00",
         "classroom": 1
     }
 }
