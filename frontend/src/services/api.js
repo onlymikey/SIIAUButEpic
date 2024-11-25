@@ -46,6 +46,17 @@ export const getUserGroups = async (userId) => {
     }
 };
 
+// Función para obtener todos los maestros (teachers)
+export const getTeachers = async () => {
+    try {
+        const response = await api.get('/teachers/');
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener los maestros:', error);
+        throw error;
+    }
+};
+
 export const getCareers = async () => {
     try {
       const response = await api.get('/careers/');
@@ -254,7 +265,7 @@ export const getGroupById = async (id) => {
 
 export const createGroup = async (groupData) => {
     try {
-        const response = await api.post('/groups/', groupData);
+        const response = await api.post('/groups/create/', groupData);
         return response; // Devolver la respuesta completa
     } catch (error) {
         console.error('Error al crear el grupo:', error);
