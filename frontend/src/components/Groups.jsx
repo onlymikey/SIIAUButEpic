@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Select, SelectItem, DateInput, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react';
+import { Input, Button, Select, SelectItem, DateInput, TimeInput, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react';
+import { CalendarDate, Time } from '@internationalized/date';
 import { getGroupById, createGroup, updateGroup, deleteGroup, getTeachers, getClassrooms, getCareers, getSubjects } from '../services/api';
+import { days } from '../data/data';
 
 export default function Groups() {
     const [isEditing, setIsEditing] = useState(false);
@@ -8,14 +10,15 @@ export default function Groups() {
     const [formData, setFormData] = useState({
         id: '',
         name: '',
-        start_date: '',
-        end_date: '',
+        start_date: new CalendarDate(2000, 1, 1),
+        end_date: new CalendarDate(2000, 1, 1),
+        start_time: new Time(8, 0),
+        end_time: new Time(10, 0),
         subject: '',
         teacher: '',
-        semester: '',
+        study_period: '',
         max_students: '',
         classroom: '',
-        career: ''
     });
     const [errors, setErrors] = useState({});
     const [hasSearched, setHasSearched] = useState(false);
@@ -27,7 +30,6 @@ export default function Groups() {
     const [deactivateTimeout, setDeactivateTimeout] = useState(null);
     const [teachers, setTeachers] = useState([]);
     const [classrooms, setClassrooms] = useState([]);
-    const [careers, setCareers] = useState([]);
     const [subjects, setSubjects] = useState([]);
 
     useEffect(() => {
@@ -35,11 +37,9 @@ export default function Groups() {
             try {
                 const teachersData = await getTeachers();
                 const classroomsData = await getClassrooms();
-                const careersData = await getCareers();
                 const subjectsData = await getSubjects();
                 setTeachers(teachersData);
                 setClassrooms(classroomsData);
-                setCareers(careersData);
                 setSubjects(subjectsData);
             } catch (error) {
                 console.error('Error al obtener los datos:', error);
@@ -61,26 +61,79 @@ export default function Groups() {
         });
     };
 
+    const handleDateChange = (name, value) => {
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: ''
+        }));
+    };
+
+    const handleTimeChange = (name, value) => {
+        setFormData({
+            ...formData,
+            [name]: value
+        });
+        setErrors((prevErrors) => ({
+            ...prevErrors,
+            [name]: ''
+        }));
+    };
+
+    const convertToCalendarDate = (dateString) => {
+        if (!dateString) return null;
+        const [day, month, year] = dateString.split('-').map(Number);
+        return new CalendarDate(year, month, day);
+    };
+    
+    const formatDate = (date) => {
+        const day = date.day.toString().padStart(2, '0');
+        const month = date.month.toString().padStart(2, '0');
+        const year = date.year.toString();
+        return `${day}-${month}-${year}`;
+    };
+
+    const convertToTime = (timeString) => {
+        if (!timeString) return null;
+        const [hour, minute] = timeString.split(':').map(Number);
+        return { hour, minute };
+    };
+    
+    const formatTime = (time) => {
+        if (!time) return '';
+        const hour = time.hour.toString().padStart(2, '0');
+        const minute = time.minute.toString().padStart(2, '0');
+        return `${hour}:${minute}`;
+    };
+
     const handleSearch = async () => {
         setLoading(true);
         try {
             const data = await getGroupById(formData.id);
+            const schedule1 = data.schedule1 || {};
             setFormData({
                 ...formData,
                 name: data.name || '',
-                start_date: data.start_date || '',
-                end_date: data.end_date || '',
+                start_date: convertToCalendarDate(data.start_date),
+                end_date: convertToCalendarDate(data.end_date),
+                start_time: convertToTime(schedule1.start_at),
+                end_time: convertToTime(schedule1.end_at),
+                day: schedule1.day || '',
                 subject: data.subject || '',
                 teacher: data.teacher || '',
-                semester: data.semester || '',
+                study_period: data.study_period || '',
                 max_students: data.max_students || '',
-                classroom: data.classroom || '',
+                classroom: schedule1.classroom || '',
                 career: data.career || ''
             });
             setIsEditing(false);
             setHasSearched(true);
             setPopoverTarget('search');
             setPopoverContent('Búsqueda realizada correctamente');
+            console.log('Datos del grupo:', data);
             setShowPopover(true);
             setTimeout(() => setShowPopover(false), 10000);
         } catch (error) {
@@ -97,19 +150,23 @@ export default function Groups() {
     const handleSave = async (e) => {
         e.preventDefault();
         setLoading(true);
-
+    
         const data = {
             name: formData.name,
-            start_date: formData.start_date,
-            end_date: formData.end_date,
-            subject: formData.subject,
-            teacher: formData.teacher,
-            semester: formData.semester,
-            max_students: formData.max_students,
-            classroom: formData.classroom,
-            career: formData.career
+            start_date: formatDate(formData.start_date),
+            end_date: formatDate(formData.end_date),
+            subject: parseInt(formData.subject),
+            teacher: parseInt(formData.teacher),
+            study_period: formData.study_period,
+            max_students: parseInt(formData.max_students),
+            schedule1: {
+                day: formData.day,
+                start_at: formatTime(formData.start_time),
+                end_at: formatTime(formData.end_time),
+                classroom: parseInt(formData.classroom)
+            }
         };
-
+    
         try {
             let response;
             if (hasSearched) {
@@ -136,10 +193,16 @@ export default function Groups() {
                 const validationErrors = error.response.data;
                 const newErrors = {};
                 console.log('Errores de validación:', validationErrors);
-
+    
                 for (const key in validationErrors) {
                     if (Object.prototype.hasOwnProperty.call(validationErrors, key)) {
-                        newErrors[key] = validationErrors[key][0];
+                        if (key === 'start_at') {
+                            newErrors['start_time'] = validationErrors[key][0];
+                        } else if (key === 'end_at') {
+                            newErrors['end_time'] = validationErrors[key][0];
+                        } else {
+                            newErrors[key] = validationErrors[key][0];
+                        }
                     }
                 }
                 setErrors(newErrors);
@@ -201,14 +264,16 @@ export default function Groups() {
         setFormData({
             id: '',
             name: '',
-            start_date: '',
-            end_date: '',
+            start_date: new CalendarDate(2000, 1, 1),
+            end_date: new CalendarDate(2000, 1, 1),
+            start_time: new Time(8, 0),
+            end_time: new Time(10, 0),
+            day: '',
             subject: '',
             teacher: '',
-            semester: '',
+            study_period: '',
             max_students: '',
             classroom: '',
-            career: ''
         });
         setErrors({});
     };
@@ -224,14 +289,16 @@ export default function Groups() {
         setFormData({
             id: '',
             name: '',
-            start_date: '',
-            end_date: '',
+            start_date: new CalendarDate(2000, 1, 1),
+            end_date: new CalendarDate(2000, 1, 1),
+            start_time: new Time(8, 0),
+            end_time: new Time(10, 0),
+            day: '',
             subject: '',
             teacher: '',
-            semester: '',
+            study_period: '',
             max_students: '',
             classroom: '',
-            career: ''
         });
         setErrors({});
     };
@@ -298,37 +365,109 @@ export default function Groups() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Input isDisabled label="ID" placeholder="12345" variant="bordered" value={formData.id} />
                     <Input isRequired label="Nombre de Grupo" placeholder="Ej. Grupo A" variant="bordered" isDisabled={!isEditing} name="name" value={formData.name} onChange={handleInputChange} errorMessage={errors.name} isInvalid={!!errors.name} />
-                    <DateInput isRequired label="Fecha de Inicio" placeholder="dd/mm/yyyy" variant="bordered" className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="start_date" value={formData.start_date} onChange={handleInputChange} errorMessage={errors.start_date} isInvalid={!!errors.start_date} />
-                    <DateInput isRequired label="Fecha de Fin" placeholder="dd/mm/yyyy" variant="bordered" className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="end_date" value={formData.end_date} onChange={handleInputChange} errorMessage={errors.end_date} isInvalid={!!errors.end_date} />
-                    <Select isRequired label="Materia" placeholder="Selecciona una materia" variant='bordered' className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="subject" value={formData.subject} onChange={handleInputChange} errorMessage={errors.subject} isInvalid={!!errors.subject}>
-                        {subjects.map((subject) => (
-                            <SelectItem key={subject.id} value={subject.id.toString()}>
-                                {subject.name}
-                            </SelectItem>
-                        ))}
-                    </Select>
-                    <Select isRequired label="Maestro" placeholder="Selecciona un maestro" variant='bordered' className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="teacher" value={formData.teacher} onChange={handleInputChange} errorMessage={errors.teacher} isInvalid={!!errors.teacher}>
-                        {teachers.map((teacher) => (
-                            <SelectItem key={teacher.id} value={teacher.id.toString()}>
-                                {teacher.name}
-                            </SelectItem>
-                        ))}
-                    </Select>
-                    <Select isRequired label="Semestre" placeholder="Selecciona un semestre" variant='bordered' className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="semester" value={formData.semester} onChange={handleInputChange} errorMessage={errors.semester} isInvalid={!!errors.semester}>
-                        {/* Agrega las opciones aquí */}
-                    </Select>
+                    <DateInput isRequired label="Fecha de Inicio" placeholderValue={new CalendarDate(2000, 1, 1)} variant="bordered" className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="start_date" value={formData.start_date} onChange={(value) => handleDateChange('start_date', value)} errorMessage={errors.start_date} isInvalid={!!errors.start_date} />
+                    <DateInput isRequired label="Fecha de Fin" placeholderValue={new CalendarDate(2000, 1, 1)} variant="bordered" className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="end_date" value={formData.end_date} onChange={(value) => handleDateChange('end_date', value)} errorMessage={errors.end_date} isInvalid={!!errors.end_date} />
+                    <TimeInput
+                            variant="bordered"
+                            isRequired
+                            label="Hora de Inicio"
+                            hourCycle={24}
+                            granularity="minute"
+                            isDisabled={!isEditing}
+                            name="start_time"
+                            value={formData.start_time}
+                            onChange={(value) => handleDateChange('start_time', value)}
+                            errorMessage={errors.start_time}
+                            isInvalid={!!errors.start_time}
+                        />
+                        <TimeInput
+                            variant="bordered"
+                            isRequired
+                            label="Hora de Fin"
+                            hourCycle={24}
+                            granularity="minute"
+                            isDisabled={!isEditing}
+                            name="end_time"
+                            value={formData.end_time}
+                            onChange={(value) => handleDateChange('end_time', value)}
+                            errorMessage={errors.end_time}
+                            isInvalid={!!errors.end_time}
+                        />
+                        <Select
+                            isRequired
+                            label="Día"
+                            placeholder="Selecciona un día"
+                            variant='bordered'
+                            className="bg-transparent text-white rounded-md"
+                            isDisabled={!isEditing}
+                            name="day"
+                            selectedKeys={formData.day ? new Set([formData.day]) : new Set()}
+                            onSelectionChange={(keys) => handleInputChange({ target: { name: 'day', value: [...keys][0] } })}
+                            errorMessage={errors.day}
+                            isInvalid={!!errors.day}
+                        >
+                            {days.map((day) => (
+                                <SelectItem key={day.key} value={day.key}>
+                                    {day.label}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                        <Select
+                            isRequired
+                            label="Materia"
+                            placeholder="Selecciona una materia"
+                            variant='bordered'
+                            className="bg-transparent text-white rounded-md"
+                            isDisabled={!isEditing}
+                            name="subject"
+                            selectedKeys={formData.subject ? new Set([formData.subject.toString()]) : new Set()}
+                            onSelectionChange={(keys) => handleInputChange({ target: { name: 'subject', value: [...keys][0] } })}
+                            errorMessage={errors.subject}
+                            isInvalid={!!errors.subject}
+                        >
+                            {subjects.map((subject) => (
+                                <SelectItem key={subject.id} value={subject.id.toString()}>
+                                    {subject.name}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                        <Select
+                            isRequired
+                            label="Profesor"
+                            placeholder="Selecciona un profesor"
+                            variant='bordered'
+                            className="bg-transparent text-white rounded-md"
+                            isDisabled={!isEditing}
+                            name="teacher"
+                            selectedKeys={formData.teacher ? new Set([formData.teacher.toString()]) : new Set()}
+                            onSelectionChange={(keys) => handleInputChange({ target: { name: 'teacher', value: [...keys][0] } })}
+                            errorMessage={errors.teacher}
+                            isInvalid={!!errors.teacher}
+                        >
+                            {teachers.map((teacher) => (
+                                <SelectItem key={teacher.id} value={teacher.id.toString()}>
+                                    {teacher.name}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                    <Input isRequired label="Ciclo Escolar" placeholder="2024A" variant="bordered" isDisabled={!isEditing} name="study_period" value={formData.study_period} onChange={handleInputChange} errorMessage={errors.study_period} isInvalid={!!errors.study_period} />
                     <Input isRequired label="Máximo de Alumnos" placeholder="Ej. 30" variant="bordered" isDisabled={!isEditing} name="max_students" value={formData.max_students} onChange={handleInputChange} errorMessage={errors.max_students} isInvalid={!!errors.max_students} />
-                    <Select isRequired label="Salón" placeholder="Selecciona un salón" variant='bordered' className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="classroom" value={formData.classroom} onChange={handleInputChange} errorMessage={errors.classroom} isInvalid={!!errors.classroom}>
+                    <Select
+                        isRequired
+                        label="Aula"
+                        placeholder="Selecciona un aula"
+                        variant='bordered'
+                        className="bg-transparent text-white rounded-md"
+                        isDisabled={!isEditing}
+                        name="classroom"
+                        selectedKeys={formData.classroom ? new Set([formData.classroom.toString()]) : new Set()}
+                        onSelectionChange={(keys) => handleInputChange({ target: { name: 'classroom', value: [...keys][0] } })}
+                        errorMessage={errors.classroom}
+                        isInvalid={!!errors.classroom}
+                    >
                         {classrooms.map((classroom) => (
                             <SelectItem key={classroom.id} value={classroom.id.toString()}>
                                 {classroom.name}
-                            </SelectItem>
-                        ))}
-                    </Select>
-                    <Select isRequired label="Carrera" placeholder="Selecciona una carrera" variant='bordered' className="bg-transparent text-white rounded-md" isDisabled={!isEditing} name="career" value={formData.career} onChange={handleInputChange} errorMessage={errors.career} isInvalid={!!errors.career}>
-                        {careers.map((career) => (
-                            <SelectItem key={career.id} value={career.id.toString()}>
-                                {career.name}
                             </SelectItem>
                         ))}
                     </Select>
