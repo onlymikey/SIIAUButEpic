@@ -12,7 +12,7 @@ class Group(models.Model):
     end_date = models.CharField(max_length=10)#DD-MM-YYYY
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     teacher = models.ForeignKey(CustomUser, on_delete=models.CASCADE, limit_choices_to={'role': 'teacher'})
-    semester = models.CharField(max_length=5)#formato 2024B
+    study_period = models.CharField(max_length=5)#formato 2024B
     quantity_students = models.IntegerField(default=0)
     max_students = models.IntegerField()
 
