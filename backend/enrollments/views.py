@@ -103,7 +103,6 @@ class UserGroupsView(APIView):
                 "subject": {
                     "id": subject.id,
                     "name": subject.name,
-                    "career": subject.career,
                     "credits": subject.credits,
                     "semester": subject.semester
                 },
