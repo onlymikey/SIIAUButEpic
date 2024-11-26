@@ -296,7 +296,7 @@ export const createGroup = async (groupData) => {
 export const updateGroup = async (id, groupData) => {
     try {
         const response = await api.put(`/groups/${id}/update/`, groupData);
-        return response.data; // Devolver la respuesta completa
+        return response; // Devolver la respuesta completa
     } catch (error) {
         console.error('Error al actualizar el grupo:', error);
         throw error;

@@ -159,13 +159,27 @@ export default function Groups() {
             teacher: parseInt(formData.teacher),
             study_period: formData.study_period,
             max_students: parseInt(formData.max_students),
-            schedule1: {
+        };
+    
+        if (hasSearched) {
+            // Para PUT, enviar los horarios como schedules
+            data.schedules = [
+                {
+                    day: formData.day,
+                    start_at: formatTime(formData.start_time),
+                    end_at: formatTime(formData.end_time),
+                    classroom: parseInt(formData.classroom)
+                }
+            ];
+        } else {
+            // Para POST, enviar el horario como schedule1
+            data.schedule1 = {
                 day: formData.day,
                 start_at: formatTime(formData.start_time),
                 end_at: formatTime(formData.end_time),
                 classroom: parseInt(formData.classroom)
-            }
-        };
+            };
+        }
     
         try {
             let response;
@@ -174,7 +188,6 @@ export default function Groups() {
                 if (response.status === 200) {
                     setPopoverContent('Datos actualizados correctamente');
                     setPopoverTarget('save');
-                    console.log('Negros de mierda:', data);
                     console.log('Datos actualizados exitosamente:', response.data);
                     handleCancel();
                 }
@@ -183,7 +196,6 @@ export default function Groups() {
                 if (response.status === 201) {
                     setPopoverContent('Datos guardados correctamente');
                     setPopoverTarget('save');
-                    console.log('Negros de mierda:', data);
                     console.log('Datos enviados exitosamente:', response.data);
                     handleCancel();
                 }
