@@ -19,9 +19,6 @@ class EnrollmentListCreateView(generics.ListCreateAPIView):
 
     # Sobrescribimos los permisos solo para creacion
     def get_permissions(self):
-        if self.request.method == 'POST':
-            # solo career_admin puede crear carreras
-            return [IsCareerAdmin()]
         return [IsAuthenticated()]
 
 # Vista para obtener, actualizar y eliminar un solo grupo
@@ -30,7 +27,7 @@ class EnrollmentDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EnrollmentSerializer
 
     def get_permissions(self):
-        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+        if self.request.method in ['DELETE']:
             # Solo career_admin puede actualizar o eliminar usuarios
             return [IsCareerAdmin()]
         return [IsAuthenticated()]
