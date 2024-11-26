@@ -10,6 +10,5 @@ export const roles = [
     { key: "miércoles", label: "Miércoles" },
     { key: "jueves", label: "Jueves" },
     { key: "viernes", label: "Viernes" },
-    { key: "sabado", label: "Sabado" },
-    { key: "domingo", label: "Domingo" }
+    { key: "sábado", label: "Sábado" }
   ];

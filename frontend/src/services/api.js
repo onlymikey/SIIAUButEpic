@@ -275,10 +275,10 @@ export const deleteCareer = async (id) => {
 // Funciones para manejar los grupos (groups)
 export const getGroupById = async (id) => {
     try {
-        const response = await api.get(`/groups/${id}/`);
+        const response = await api.get(`/groups/${id}/schedules/`);
         return response.data;
     } catch (error) {
-        console.error('Error al obtener el grupo:', error);
+        console.error('Error al obtener el grupo con horarios:', error);
         throw error;
     }
 };
@@ -295,7 +295,7 @@ export const createGroup = async (groupData) => {
 
 export const updateGroup = async (id, groupData) => {
     try {
-        const response = await api.put(`/groups/${id}/`, groupData);
+        const response = await api.put(`/groups/${id}/update/`, groupData);
         return response; // Devolver la respuesta completa
     } catch (error) {
         console.error('Error al actualizar el grupo:', error);
@@ -305,8 +305,8 @@ export const updateGroup = async (id, groupData) => {
 
 export const deleteGroup = async (id) => {
     try {
-        const response = await api.delete(`/groups/${id}/`);
-        return response; // Devolver la respuesta completa
+        const response = await api.delete(`/groups/${id}/delete/`);
+        return response.data; // Devolver la respuesta completa
     } catch (error) {
         console.error('Error al eliminar el grupo:', error);
         throw error;
