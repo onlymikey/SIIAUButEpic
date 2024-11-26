@@ -1,0 +1,1150 @@
+EL SIGUIENTE TXT MUESTRA DEBEN SER LOS BODYS DEL REQUEST, LOS CUALES SON JSON,
+Y QUE ES LO QUE DEVUELVEN AL REALIZAR LA SOLICITUD (tambien puede anexar ejemplos de respuestas de error).
+
+Organizado por models(despues de la url base api/):
+*****************************************************************
+*********                                       *****************
+*********                USERS                  *****************
+*********                                       *****************
+*****************************************************************
+
+**********************endpoint: users/*********************************************************************
+método: POST
+descripción: crea un usuario.
+body JSON:
+{
+    "career" : 1, (only obligatory for students)
+    "name" : "Lola",
+    "username" : "LALA",
+    "email" : "examp@examp.com",
+    "password" : "holaMundo8Cara",
+    "father_last_name" : "Palma",
+    "mother_last_name" : "Lopez",
+    "birthdate" : "10-10-2024", (only obligatory for students)
+    "studies_degree" : "Doctorado", (only obligatory for teachers)
+    "role" : "teacher"
+}
+respuesta para este request:
+{
+    "id": 1,
+    "username": "a",
+    "birthdate": "10/10/2024",
+    "email": "b@examp.com",
+    "name": "Lola",
+    "studies_degree": "Doctorado",
+    "father_last_name": "Palma",
+    "mother_last_name": "Lopez",
+    "role": "student",
+    "career": 1
+}
+status:201
+
+
+
+
+***********************************************endpoint: users/*******************************************
+método: GET
+descripción: Obtiene un json que lista TODOS los usuarios.
+body JSON: empty
+respuesta para este request:
+{
+    "id": 1,
+    "username": "a",
+    "birthdate": "10/10/2024",
+    "email": "b@examp.com",
+    "name": "Lola",
+    "studies_degree": "Doctorado",
+    "father_last_name": "Palma",
+    "mother_last_name": "Lopez",
+    "role": "student",
+    "career": 1
+},
+{
+    "id": 2,
+    "username": "a",
+    "birthdate": "10/10/2024",
+    "email": "b@examp.com",
+    "name": "Lola",
+    "studies_degree": "Doctorado",
+    "father_last_name": "Palma",
+    "mother_last_name": "Lopez",
+    "role": "student",
+    "career": 1
+},
+{
+    "id": 3,
+    "username": "a",
+    "birthdate": "10/10/2024",
+    "email": "b@examp.com",
+    "name": "Lola",
+    "studies_degree": "Doctorado",
+    "father_last_name": "Palma",
+    "mother_last_name": "Lopez",
+    "role": "student",
+    "career": 1
+},
+...
+status:200
+(si no hay usuarios el status es el mismo; el json estara vacio).
+
+
+
+
+*********************************************users/<int:PK>/********************************************************
+método: GET
+descripción: Obtiene un usuario en especifico.
+body JSON: empty
+respuesta para este request:
+{
+    "id": 1,
+    "username": "student01",
+    "birthdate": "2000-01-01",
+    "email": "student01@example.com",
+    "name": "John",
+    "studies_degree": "Bachelor",
+    "father_last_name": "Doe",
+    "mother_last_name": "Smith",
+    "role": "student",
+    "career": 2
+}
+status:200
+respuesta de error:
+{
+    "detail": "Not found."
+}
+descripción: no se ha encontrado al user con ese id
+status:404
+
+
+
+
+
+*********************************************users/<int:PK>/********************************************************
+método: PUT
+descripción: Actualiza un usuario.
+body JSON:
+{
+    "username": "updated_user",
+    "birthdate": "1999-05-10",
+    "email": "updated_user@example.com",
+    "name": "Updated Name",
+    "studies_degree": "Master",
+    "father_last_name": "Updated Last Name",
+    "mother_last_name": "Smith",
+    "role": "teacher",
+    "career": 3,
+    "is_active" : 0 (boolean)
+}
+respuesta para este request:
+{
+    "id": 1,
+    "username": "updated_user",
+    "birthdate": "1999-05-10",
+    "email": "updated_user@example.com",
+    "name": "Updated Name",
+    "studies_degree": "Master",
+    "father_last_name": "Updated Last Name",
+    "mother_last_name": "Smith",
+    "role": "teacher",
+    "career": 3,
+    "is_active" : 0 (boolean)
+}
+status:200
+
+
+
+
+************************************************users/<int:PK>/**************************************************************
+método: DELETE
+descripción: Elimina un usuario.
+body JSON: empty
+respuesta para este request: vacio
+status:204
+respuesta de error:
+{
+    "detail": "Not found."
+}
+descripción: no se ha encontrado un user con ese id
+status:404
+
+
+
+
+*************************************************users/next-id/***************************************************************
+método: GET
+descripción: Obtiene el id que sera asignado al siguiente user a registrar.
+body JSON: empty
+respuesta para este request:
+{
+    "next_id" : 1
+}
+status:200
+
+
+
+
+
+**************************************************login/*******************************************************************
+método: POST
+descripción: Se logea en el sistema.
+body JSON:
+{
+    "username" : "Lol",
+    "password" : "holaMundo8Cara"
+}
+respuesta para este request:
+{
+    "refresh": <refresh_token>,
+    "access": "<acces_token>",
+    "user": {
+        "id": 1,
+        "username": "abc",
+        "birthdate": "10/10/2024",
+        "email": "bcd@examp.com",
+        "name": "Lola",
+        "studies_degree": "Doctorado",
+        "father_last_name": "Palma",
+        "mother_last_name": "Lopez",
+        "role": "teacher",
+        "career": null
+    }
+}
+status:200
+respuesta de error:
+{
+    "detail": "Credenciales incorrectas"
+}
+descripción: Alguno de los datos son incorrectos.
+status:401
+
+
+
+
+**************************************************users/<int:user_id>/deactivate/*******************************************************************
+método: PATCH
+descripción: Solo como admin_career, puedes dar de baja un user.
+body json: empty
+Respuesta para este request:
+{
+    "detail": "El usuario usuario_prueba ha sido desactivado."
+}
+status: 200
+
+
+
+
+
+
+**************************************************users/<int:user_id>/reactivate/*******************************************************************
+método: PATCH
+descripción: Solo como admin_career, puedes dar de alta un user.
+body json: empty
+Respuesta para este request:
+{
+    "detail": "El usuario usuario_prueba ha sido reactivado."
+}
+status: 200
+
+
+
+
+
+
+
+**************************************************teachers/*******************************************************************
+método: GET
+descripción: Obtener todos los maestros
+body json: empty
+Respuesta para este request:
+[
+    {
+        "id": 5,
+        "username": "holaHola",
+        "birthdate": "10/10/2024",
+        "email": "holaHola@mundo.com",
+        "name": "Lola",
+        "studies_degree": "Doctorado",
+        "father_last_name": "Palma",
+        "mother_last_name": "Lopez",
+        "role": "teacher",
+        "career": 1
+    },
+    {
+        "id": 6,
+        "username": "Palma",
+        "birthdate": "10/10/2024",
+        "email": "pal@mundo.com",
+        "name": "Lola",
+        "studies_degree": "Doctorado",
+        "father_last_name": "Palma",
+        "mother_last_name": "Lopez",
+        "role": "teacher",
+        "career": 1
+    },
+    {
+        "id": 7,
+        "username": "Nobody",
+        "birthdate": "10/10/2024",
+        "email": "no@mundo.com",
+        "name": "Lola",
+        "studies_degree": "Doctorado",
+        "father_last_name": "Palma",
+        "mother_last_name": "Lopez",
+        "role": "teacher",
+        "career": 1
+    },
+    {
+        "id": 8,
+        "username": "PalNorte",
+        "birthdate": "10/10/2024",
+        "email": "Pape@mundo.com",
+        "name": "Lola",
+        "studies_degree": "Doctorado",
+        "father_last_name": "Palma",
+        "mother_last_name": "Lopez",
+        "role": "teacher",
+        "career": 1
+    }
+]
+status: 200
+
+
+
+
+
+
+
+
+
+
+*****************************************************************
+*********                                       *****************
+*********                CAREERS                *****************
+*********                                       *****************
+*****************************************************************
+
+**************************************************careers/**************************************************************
+método: POST
+descripción: Se crea una nueva carrera.
+body JSON:
+{
+    "name" : "Física",
+    "semester_quantity" : 10
+}
+respuesta para este request:
+{
+    "id": 1,
+    "name": "Ingenieria en sistemas computacionales",
+    "semester_quantity": 10
+}
+status:201
+
+
+****************************************************careers/*************************************************************
+método: GET
+descripción: Obtener todas las carreras.
+body JSON: empty
+respuesta para este request:
+{
+    "id": 1,
+    "name": "Ingenieria en sistemas computacionales",
+    "semester_quantity": 10
+},
+{
+    "id": 2,
+    "name": "Ingenieria en sistemas computacionales",
+    "semester_quantity": 10
+},
+{
+    "id": 3,
+    "name": "Ingenieria en sistemas computacionales",
+    "semester_quantity": 10
+},
+...
+status:200
+
+
+
+
+*****************************************************careers/<int:PK>/**************************************************
+método: GET
+descripción: Obtiene una carrera en especifico.
+endpoint example: careers/1/
+body JSON: empty
+respuesta para este request:
+{
+    "id": 1,
+    "name": "Ingenieria en sistemas computacionales",
+    "semester_quantity": 10
+}
+status:200
+
+
+
+*****************************************************careers/<int:PK>/**************************************************
+método: PUT
+descripción: Edita una carrera en especifico.
+endpoint example: careers/1/
+body JSON:
+{
+    "name": "Ingenieria en sistemas computacionales cabrones",
+    "semester_quantity": 10
+}
+respuesta para este request:
+{
+    "id": 1,
+    "name": "Ingenieria en sistemas computacionales cabrones",
+    "semester_quantity": 10
+}
+status:200
+
+
+
+************************************************careers/<int:PK>/**************************************************************
+método: DELETE
+descripción: Elimina la carrera.
+body JSON: empty
+endpoint example: careers/1/
+respuesta para este request: vacio
+status:204
+respuesta de error:
+{
+    "detail": "Not found."
+}
+descripción: no se ha encontrado un user con ese id
+status:404
+
+
+
+
+************************************************careers/next-id/**************************************************************
+método: GET
+descripción: Obtiene el id que sera asignado a la siguiente career a registrar.
+body JSON: empty
+respuesta para este request:
+{
+    "next_id" : 1
+}
+status:200
+
+
+
+
+
+
+************************************************careers/<int:career_id>/subjects/**************************************************************
+método: GET
+descripción: Obtienes las materias relacionadas a una carrera.
+body JSON: empty
+respuesta para este request:
+[
+    {
+        "id": 1,
+        "credits": 8,
+        "semester": 4,
+        "name": "Calculo",
+        "career": 1
+    },
+    {
+        "id": 2,
+        "credits": 10,
+        "semester": 15,
+        "name": "Espacios Vectoriales",
+        "career": 1
+    },
+    {
+        "id": 3,
+        "credits": 10,
+        "semester": 10,
+        "name": "Sexo anal",
+        "career": 1
+    }
+]
+status:200
+
+
+
+
+
+
+
+
+
+
+*****************************************************************
+*********                                       *****************
+*********                CLASSROOMS             *****************
+*********                                       *****************
+*****************************************************************
+
+************************************************classrooms/**************************************************************
+Método: POST
+Descripción: Se crea un nuevo salón de clases.
+Body JSON:
+{
+    "name": "A101",
+    "floor": 1
+}
+Respuesta para este request:
+{
+    "id": 1,
+    "name": "A101",
+    "floor": 1
+}
+status:201
+
+
+
+
+************************************************classrooms/**************************************************************
+Método: GET
+Descripción: Obtener todos los salones de clases.
+Body JSON: empty
+Respuesta para este request:
+[
+    {
+        "id": 1,
+        "name": "A101",
+        "floor": 1
+    },
+    {
+        "id": 2,
+        "name": "B202",
+        "floor": 2
+    },
+    {
+        "id": 3,
+        "name": "C303",
+        "floor": 3
+    }
+]
+status: 200
+
+
+
+************************************************classrooms/<int:PK>/**************************************************************
+Método: GET
+Descripción: Obtiene un salón de clases en específico.
+Endpoint Example: classrooms/1/
+Body JSON: empty
+Respuesta para este request:
+{
+    "id": 1,
+    "name": "A101",
+    "floor": 1
+}
+status: 200
+
+
+
+
+************************************************classrooms/<int:PK>/**************************************************************
+Método: PUT
+Descripción: Edita un salón de clases en específico.
+Endpoint Example: classrooms/1/
+Body JSON:
+{
+    "name": "D404",
+    "floor": 4
+}
+
+Respuesta para este request:
+{
+    "id": 1,
+    "name": "D404",
+    "floor": 4
+}
+status: 200
+
+
+
+
+************************************************classrooms/<int:PK>/**************************************************************
+Método: DELETE
+Descripción: Elimina un salón de clases.
+Endpoint Example: classrooms/1/
+Body JSON: empty
+Respuesta para este request: empty
+status: 204
+Respuesta de error para DELETE:
+{
+    "detail": "Not found."
+}
+Descripción: No se ha encontrado un salón de clases con ese ID.
+status: 404
+
+
+
+************************************************classrooms/next-id/**************************************************************
+método: GET
+descripción: Obtiene el id que sera asignado al siguiente classroom a registrar.
+body JSON: empty
+respuesta para este request:
+{
+    "next_id" : 1
+}
+status:200
+
+
+
+
+
+*****************************************************************
+*********                                       *****************
+*********                ENROLLMENTS            *****************
+*********                                       *****************
+*****************************************************************
+
+************************************************enrollments/**************************************************************
+Método: POST
+Descripción: Se crea una nueva inscripción.
+Body JSON:
+{
+    "user": 1,
+    "group": 1
+}
+Respuesta para este request:
+{
+    "id": 1,
+    "user": 1,
+    "group": 1
+}
+status: 201
+
+
+
+************************************************enrollments/**************************************************************
+Método: GET
+Descripción: Obtener todas las inscripciones.
+Body JSON: empty
+Respuesta para este request:
+[
+    {
+        "id": 1,
+        "user": 1,
+        "group": 1
+    },
+    {
+        "id": 2,
+        "user": 2,
+        "group": 1
+    },
+    {
+        "id": 3,
+        "user": 3,
+        "group": 2
+    }
+]
+status: 200
+
+
+
+************************************************enrollments/<int:pk>/**************************************************************
+Método: GET
+Descripción: Obtiene una inscripción en específico.
+Endpoint Example: enrollments/1/
+Body JSON: empty
+Respuesta para este request:
+{
+    "id": 1,
+    "user": 1,
+    "group": 1
+}
+status: 200
+
+
+
+************************************************enrollments/<int:pk>/**************************************************************
+Método: PUT
+Descripción: Edita una inscripción en específico.
+Endpoint Example: enrollments/1/
+Body JSON:
+{
+    "user": 2,
+    "group": 2
+}
+Respuesta para este request:
+{
+    "id": 1,
+    "user": 2,
+    "group": 2
+}
+status: 200
+
+
+
+************************************************enrollments/<int:pk>/**************************************************************
+Método: DELETE
+Descripción: Elimina una inscripción.
+Endpoint Example: enrollments/1/
+Body JSON: empty
+Respuesta para este request: empty
+Status: 204 No Content
+Respuesta de error para DELETE:
+{
+    "detail": "Not found."
+}
+Descripción: No se ha encontrado una inscripción con ese ID.
+Status: 404 Not Found
+
+
+************************************************enrollments/user/<int:user_id>/**************************************************************
+Método: GET
+Descripción: Obtiene todas las inscripciones asociadas a un usuario específico.
+Endpoint Example: enrollments/user/1/
+Body JSON: empty
+Respuesta para este request:
+{
+    "user_id": 2,
+    "groups": [
+        {
+            "id": 6,
+            "name": "0024",
+            "start_date": "2024-01-10",
+            "end_date": "2024-06-10",
+            "schedules": [
+                {
+                    "day": "lunes",
+                    "start_at": "07:00",
+                    "end_at": "19:00",
+                    "classroom": {
+                        "name": "AS3",
+                        "floor": 2
+                    }
+                },
+                {
+                    "day": "miércoles",
+                    "start_at": "08:00",
+                    "end_at": "09:30",
+                    "classroom": {
+                        "name": "AS4",
+                        "floor": 2
+                    }
+                }
+            ]
+        },
+        {
+            "id": 8,
+            "name": "0025",
+            "start_date": "2024-01-10",
+            "end_date": "2024-06-10",
+            "schedules": [
+                {
+                    "day": "martes",
+                    "start_at": "07:00",
+                    "end_at": "19:00",
+                    "classroom": {
+                        "name": "AS3",
+                        "floor": 2
+                    }
+                },
+                {
+                    "day": "jueves",
+                    "start_at": "08:00",
+                    "end_at": "09:30",
+                    "classroom": {
+                        "name": "AS4",
+                        "floor": 2
+                    }
+                }
+            ]
+        }
+    ]
+}
+Status: 200
+
+
+
+************************************************enrollments/next_id/**************************************************************
+Método: GET
+Descripción: Obtiene el ID que será asignado a la siguiente inscripción a registrar.
+Body JSON: empty
+Respuesta para este request:
+{
+    "next_id": 5
+}
+status: 200
+
+
+
+
+
+
+*****************************************************************
+*********                                       *****************
+*********                  GROUPS               *****************
+*********                                       *****************
+*****************************************************************
+
+************************************************groups/**************************************************************
+Método: GET  
+Descripción: Obtener todos los grupos. 
+Body JSON: empty
+Respuesta para este request:
+[
+    {
+        "id": 15,
+        "name": "A103",
+        "start_date": "15-01-2024",
+        "end_date": "15-01-2025",
+        "study_period": "2024B",
+        "quantity_students": 0,
+        "max_students": 30,
+        "subject": 1,
+        "teacher": 2,
+        "schedules": [
+            {
+                "id": 9,
+                "day": "lunes",
+                "start_at": "08:00:00",
+                "end_at": "10:00:00",
+                "group": 15,
+                "classroom": 1
+            },
+            {
+                "id": 10,
+                "day": "miércoles",
+                "start_at": "08:00:00",
+                "end_at": "10:00:00",
+                "group": 15,
+                "classroom": 1
+            }
+        ]
+    },
+    {
+        "id": 16,
+        "name": "A101",
+        "start_date": "15-01-2024",
+        "end_date": "15-01-2025",
+        "study_period": "2024B",
+        "quantity_students": 0,
+        "max_students": 30,
+        "subject": 1,
+        "teacher": 2,
+        "schedules": [
+            {
+                "id": 11,
+                "day": "martes",
+                "start_at": "08:00:00",
+                "end_at": "10:00:00",
+                "group": 16,
+                "classroom": 1
+            },
+            {
+                "id": 12,
+                "day": "jueves",
+                "start_at": "08:00:00",
+                "end_at": "10:00:00",
+                "group": 16,
+                "classroom": 1
+            }
+        ]
+    }
+]
+status: 200
+
+
+
+
+
+
+************************************************groups/next_id/**************************************************************
+Método: GET  
+Descripción: Obtiene el ID que será asignado al siguiente grupo a registrar.
+Body JSON: empty
+Respuesta para este request:
+{
+    "next_id": 3
+}
+
+status: 200
+
+
+************************************************groups/create/**************************************************************
+Método: POST  
+Descripción: Crea un grupo y sus horarios.
+Body JSON:
+{
+    "name": "A101",
+    "start_date": "15-11-2024",
+    "end_date": "15-01-2025",
+    "subject": 1,
+    "teacher": 2,
+    "study_period": "2024B",
+    "max_students": 30,
+    "schedule1": {
+        "day": "lunes",
+        "start_at": "08:00",
+        "end_at": "10:00",
+        "classroom": 1
+    },
+    "schedule2": {
+        "day": "miércoles",
+        "start_at": "08:00",
+        "end_at": "10:00",
+        "classroom": 1
+    }
+}
+Respuesta para este request:
+{
+    "message": "Grupo y horarios creados exitosamente",
+    "group_id": 1
+}
+status: 201
+
+
+
+************************************************groups/<int:group_id>/schedules/**************************************************************
+Método: GET  
+Descripción: Obtiene un grupo con sus horarios.
+Body JSON: empty
+Respuesta para este request:
+{
+    "id": 17,
+    "name": "G001",
+    "start_date": "01-01-2024",
+    "end_date": "31-05-2024",
+    "study_period": "2024B",
+    "quantity_students": 15,
+    "max_students": 30,
+    "subject": 1,
+    "teacher": 2,
+    "schedules": [
+        {
+            "id": 15,
+            "day": "viernes",
+            "start_at": "08:00:00",
+            "end_at": "10:00:00",
+            "group": 17,
+            "classroom": 1
+        }
+    ]
+}
+status: 200
+
+
+
+
+
+************************************************groups/<int:group_id>/delete/**************************************************************
+Método: GET  
+Descripción: Borra un grupo y sus horarios.
+Body JSON: empty
+Respuesta para este request:
+{
+    "message": "Grupo con ID 1 y sus horarios relacionados fueron eliminados."
+}
+status: 204
+
+
+
+
+************************************************groups/<int:group_id>/update/**************************************************************
+Método: PUT  
+Descripción: Actualiza un grupo y sus horarios (todos los campos).
+Body JSON:
+{
+    "name": "G001",
+    "start_date": "01-01-2024",
+    "end_date": "31-05-2024",
+    "subject": 1,
+    "teacher": 2,
+    "study_period": "2024B",
+    "quantity_students": 15,
+    "max_students": 30,
+    "schedules": [
+        {
+            "classroom": 1,
+            "day": "viernes",
+            "start_at": "08:00:00",
+            "end_at": "10:00:00"
+        }
+    ]
+}
+Respuesta para este request:
+{
+    "name": "G001",
+    "start_date": "01-01-2024",
+    "end_date": "31-05-2024",
+    "subject": 1,
+    "teacher": 2,
+    "study_period": "2024B",
+    "quantity_students": 15,
+    "max_students": 30,
+    "schedules": [
+        {
+            "classroom": 1,
+            "day": "viernes",
+            "start_at": "08:00:00",
+            "end_at": "10:00:00"
+        }
+    ]
+}
+status: 200
+
+
+
+
+
+
+
+************************************************groups/<int:group_id>/update/**************************************************************
+Método: PATCH  
+Descripción: Actualiza un grupo y sus horarios (algunos datos).
+Body JSON:
+{
+    "name": "G005",
+    "schedules": [
+        {
+            "classroom": 1,
+            "day": "jueves",
+            "start_at": "14:00:00",
+            "end_at": "16:00:00"
+        }
+    ]
+}
+Respuesta para este request:
+{
+    "message": "Grupo y horarios actualizados correctamente.",
+    "group": {
+        "id": 17,
+        "name": "G005",
+        "start_date": "01-01-2024",
+        "end_date": "31-05-2024",
+        "study_period": "2024B",
+        "quantity_students": 15,
+        "max_students": 30,
+        "subject": 1,
+        "teacher": 2
+    },
+    "schedules": [
+        {
+            "id": 17,
+            "day": "jueves",
+            "start_at": "14:00:00",
+            "end_at": "16:00:00",
+            "group": 17,
+            "classroom": 1
+        }
+    ]
+}
+status: 200
+
+
+
+
+
+
+
+
+
+
+*****************************************************************
+*********                                       *****************
+*********                  SUBJECTS             *****************
+*********                                       *****************
+*****************************************************************
+
+
+*************************************************subjects/**************************************************************
+Método: POST
+Descripción: Se crea una nueva materia.
+Body JSON:
+{
+    "career": 1,
+    "name": "Mathematics"
+}
+Respuesta para este request:
+{
+    "id": 1,
+    "career": 1,
+    "name": "Mathematics"
+}
+status: 201
+
+
+
+
+*************************************************subjects/**************************************************************
+Método: GET
+Descripción: Obtener todas las materias.
+Body JSON: empty
+Respuesta para este request:
+[
+    {
+        "id": 1,
+        "career": 1,
+        "name": "Mathematics"
+    },
+    {
+        "id": 2,
+        "career": 2,
+        "name": "Physics"
+    }
+]
+status: 200
+
+
+
+
+*************************************************subjects/int:pk/**************************************************************
+Método: GET
+Descripción: Obtiene una materia específica.
+Endpoint Example: subjects/1/
+Body JSON: empty
+Respuesta para este request:
+{
+    "id": 1,
+    "career": 1,
+    "name": "Mathematics"
+}
+status: 200
+
+
+
+*************************************************subjects/int:pk/**************************************************************
+Método: PUT
+Descripción: Edita una materia específica.
+Endpoint Example: subjects/1/
+Body JSON:
+{
+    "career": 2,
+    "name": "Advanced Mathematics"
+}
+Respuesta para este request:
+{
+    "id": 1,
+    "career": 2,
+    "name": "Advanced Mathematics"
+}
+status: 200
+
+
+
+*************************************************subjects/int:pk/**************************************************************
+Método: DELETE
+Descripción: Elimina una materia.
+Endpoint Example: subjects/1/
+Body JSON: empty
+Respuesta para este request: empty
+status: 204
+Respuesta de error para DELETE:
+{
+    "detail": "Not found."
+}
+Descripción: No se ha encontrado una materia con ese ID.
+Status: 404 Not Found
+
+
+
+
+
+*************************************************subjects/next_id/**************************************************************
+Método: GET
+Descripción: Obtiene el ID que será asignado a la siguiente materia a registrar.
+Body JSON: empty
+Respuesta para este request:
+{
+    "next_id": 3
+}
+status: 200
