@@ -113,7 +113,7 @@ export default function Groups() {
         setLoading(true);
         try {
             const data = await getGroupById(formData.id);
-            const schedule1 = data.schedule1 || {};
+            const schedule1 = data.schedules[0] || {}; // Accede al primer horario en la lista de horarios
             setFormData({
                 ...formData,
                 name: data.name || '',
@@ -159,13 +159,27 @@ export default function Groups() {
             teacher: parseInt(formData.teacher),
             study_period: formData.study_period,
             max_students: parseInt(formData.max_students),
-            schedule1: {
+        };
+    
+        if (hasSearched) {
+            // Para PUT, enviar los horarios como schedules
+            data.schedules = [
+                {
+                    day: formData.day,
+                    start_at: formatTime(formData.start_time),
+                    end_at: formatTime(formData.end_time),
+                    classroom: parseInt(formData.classroom)
+                }
+            ];
+        } else {
+            // Para POST, enviar el horario como schedule1
+            data.schedule1 = {
                 day: formData.day,
                 start_at: formatTime(formData.start_time),
                 end_at: formatTime(formData.end_time),
                 classroom: parseInt(formData.classroom)
-            }
-        };
+            };
+        }
     
         try {
             let response;
