@@ -5,7 +5,7 @@ import { BsFillPersonFill } from "react-icons/bs";
 import api from '../services/api'; // Importa el cliente HTTP
 import { useNavigate } from 'react-router-dom';
 
-export default function LoginCard() {
+export default function LoginCard({ setUserRole }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState({ username: false, password: false });
@@ -51,9 +51,11 @@ export default function LoginCard() {
                 localStorage.setItem('tokenExpiration', tokenExpirationDate.toISOString());
                 localStorage.setItem('userRole', user.role);
 
+                // Actualizar el estado de userRole en App
+                setUserRole(user.role);
+
                 // Redirigir al dashboard
                 navigate('/dashboard');
-                console.log(response.data);
             } else {
                 setError({ username: true, password: true });
             }

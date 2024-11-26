@@ -21,6 +21,17 @@ export default function App() {
     if (role) {
       setUserRole(role);
     }
+
+    const handleStorageChange = () => {
+      const updatedRole = localStorage.getItem('userRole');
+      setUserRole(updatedRole);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
 
   return (
@@ -28,7 +39,7 @@ export default function App() {
       <div className="dark text-foreground bg-gradient-to-bl from-slate-900 to-indigo-900 w-full h-screen flex">
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<LoginCard />} />
+          <Route path="/login" element={<LoginCard setUserRole={setUserRole} />} />
           <Route path="/*" element={
             <PrivateRoute>
               <div className="flex w-full h-full">
