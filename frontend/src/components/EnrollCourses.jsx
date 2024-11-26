@@ -1,56 +1,92 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@nextui-org/react";
-import { getGroups, getUserGroups, getSubjectById, getUserById, createEnrollment } from '../services/api'; // Asegúrate de importar las funciones correctas
+import { getGroups, getUserGroups, getSubjectById, getUserById, createEnrollment, deleteEnrollment } from '../services/api'; // Asegúrate de importar las funciones correctas
 
 const EnrollCourses = () => {
     const [availableGroups, setAvailableGroups] = useState([]);
     const [registeredGroups, setRegisteredGroups] = useState([]);
     const userId = localStorage.getItem('userId');
-    const [materiasRegistradas, setMateriasRegistradas] = useState([]);
     const [subjects, setSubjects] = useState({});
     const [teachers, setTeachers] = useState({});
 
-    useEffect(() => {
-        const fetchGroups = async () => {
-            try {
-                const allGroups = await getGroups();
-                const userGroups = await getUserGroups(userId);
-
-                setRegisteredGroups(userGroups);
-
-                const filteredGroups = allGroups.filter(group => 
-                    !userGroups.some(userGroup => userGroup.id === group.id)
-                );
-
-                setAvailableGroups(filteredGroups);
-            } catch (error) {
-                console.error('Error fetching groups:', error);
-            }
-        };
-
-        fetchGroups();
-    }, [userId]);
-
-    const guardarRegistros = async () => {
+    const loadGroups = async () => {
         try {
-            const enrollmentPromises = materiasRegistradas.map(materia => {
-                const enrollmentData = {
-                    user: userId,
-                    group: materia.id
-                };
-                return createEnrollment(enrollmentData);
+            const allGroups = await getGroups();
+            const userGroups = await getUserGroups(userId);
+            console.log(allGroups);
+            console.log(userGroups);
+
+            setRegisteredGroups(userGroups);
+
+            const filteredGroups = allGroups.filter(group => 
+                !userGroups.some(userGroup => userGroup.id === group.id)
+            );
+
+            setAvailableGroups(filteredGroups);
+
+            // Fetch teacher names
+            const teacherIds = new Set(allGroups.map(group => group.teacher));
+            const teacherPromises = Array.from(teacherIds).map(id => getUserById(id));
+            const teacherResults = await Promise.all(teacherPromises);
+
+            const teacherMap = {};
+            teacherResults.forEach(teacher => {
+                teacherMap[teacher.id] = teacher.name;
             });
 
-            await Promise.all(enrollmentPromises);
-            alert('Inscripciones guardadas con éxito');
+            setTeachers(teacherMap);
+
+            // Fetch subject names
+            const subjectIds = new Set(allGroups.map(group => group.subject));
+            const subjectPromises = Array.from(subjectIds).map(id => getSubjectById(id));
+            const subjectResults = await Promise.all(subjectPromises);
+
+            const subjectMap = {};
+            subjectResults.forEach(subject => {
+                subjectMap[subject.id] = subject.name;
+            });
+
+            setSubjects(subjectMap);
+
         } catch (error) {
-            console.error('Error al guardar las inscripciones:', error);
-            alert('Hubo un error al guardar las inscripciones');
+            console.error('Error fetching groups:', error);
         }
     };
 
-    const cancelarRegistro = (id) => {
-        setMateriasRegistradas(materiasRegistradas.filter(materia => materia.id !== id));
+    useEffect(() => {
+        loadGroups();
+    }, [userId]);
+
+    const guardarRegistro = async (materia) => {
+        try {
+            const enrollmentData = {
+                user: userId,
+                group: materia.id
+            };
+            await createEnrollment(enrollmentData);
+
+            // Recargar los grupos después de registrar la materia
+            await loadGroups();
+
+            alert('Inscripción guardada con éxito');
+        } catch (error) {
+            console.error('Error al guardar la inscripción:', error);
+            alert('Hubo un error al guardar la inscripción');
+        }
+    };
+
+    const cancelarRegistro = async (id) => {
+        try {
+            await deleteEnrollment(id);
+
+            // Recargar los grupos después de cancelar la inscripción
+            await loadGroups();
+
+            alert('Inscripción cancelada con éxito');
+        } catch (error) {
+            console.error('Error al cancelar la inscripción:', error);
+            alert('Hubo un error al cancelar la inscripción');
+        }
     };
 
     return (
@@ -62,8 +98,6 @@ const EnrollCourses = () => {
                 <div className="flex items-center mb-4">
                     <span className="text-2xl mr-3">🚩</span>
                     <h3 className="text-xl font-bold">Materias registradas:</h3>
-                    <Button color="danger" variant='flat' className="ml-20" onClick={() => setMateriasRegistradas([])}>Cancelar Registros</Button>
-                    <Button color="success" variant='flat' className="ml-4" onClick={guardarRegistros}>Guardar Registros</Button>
                 </div>
                 <table className="w-full text-sm border-collapse">
                     <thead>
@@ -150,7 +184,7 @@ const EnrollCourses = () => {
                                         size="sm"
                                         color="success"
                                         variant='flat'
-                                        onClick={() => setMateriasRegistradas([...materiasRegistradas, materia])}
+                                        onClick={() => guardarRegistro(materia)}
                                     >
                                         Registrar
                                     </Button>

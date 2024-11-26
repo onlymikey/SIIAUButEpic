@@ -17,8 +17,14 @@ const DashboardStudents = () => {
     const fetchUserGroups = async () => {
       try {
         const userId = localStorage.getItem('userId');
-        const groups = await getUserGroups(userId);
-        const allSchedules = groups.flatMap(group => group.schedules);
+        const response = await getUserGroups(userId);
+        const groups = response || [];
+        const allSchedules = groups.flatMap(group => 
+          group.schedules.map(schedule => ({
+            ...schedule,
+            subjectName: group.subject.name
+          }))
+        );
         setSchedules(allSchedules);
       } catch (error) {
         console.error('Error al obtener los grupos del usuario:', error);
@@ -69,7 +75,7 @@ const DashboardStudents = () => {
                         {schedules
                           .filter(schedule => schedule.day === day && schedule.start_at === hora.split('-')[0])
                           .map(schedule => (
-                            <div key={schedule.id}>{schedule.classroom.name}</div>
+                            <div key={schedule.start_at + schedule.day}>{schedule.subjectName}</div>
                           ))}
                       </td>
                     ))}
@@ -104,13 +110,9 @@ const DashboardStudents = () => {
           { label: "Kardex", icon: <MdInsertDriveFile />, color: "bg-yellow-600", path: "#" },
           { label: "Cerrar Sesión", icon: <MdLogin />, color: "bg-red-600", path: "#" },
         ].map((button) => (
-          <Link
-            to={button.path}
-            key={button.label}
-            className={`${button.color} flex flex-col items-center justify-center p-6 rounded-lg shadow-lg hover:scale-105 transform transition`}
-          >
-            <div className="text-3xl text-white mb-2">{button.icon}</div>
-            <span className="text-white font-semibold">{button.label}</span>
+          <Link key={button.label} to={button.path} className={`p-4 rounded-lg shadow-lg text-white text-center ${button.color}`}>
+            <div className="text-2xl mb-2">{button.icon}</div>
+            <div className="text-lg font-semibold">{button.label}</div>
           </Link>
         ))}
       </div>
@@ -119,4 +121,3 @@ const DashboardStudents = () => {
 };
 
 export default DashboardStudents;
-
