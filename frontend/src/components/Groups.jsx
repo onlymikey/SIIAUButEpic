@@ -113,7 +113,7 @@ export default function Groups() {
         setLoading(true);
         try {
             const data = await getGroupById(formData.id);
-            const schedule1 = data.schedule1 || {};
+            const schedule1 = data.schedules[0] || {}; // Accede al primer horario en la lista de horarios
             setFormData({
                 ...formData,
                 name: data.name || '',
@@ -174,6 +174,7 @@ export default function Groups() {
                 if (response.status === 200) {
                     setPopoverContent('Datos actualizados correctamente');
                     setPopoverTarget('save');
+                    console.log('Negros de mierda:', data);
                     console.log('Datos actualizados exitosamente:', response.data);
                     handleCancel();
                 }
@@ -182,6 +183,7 @@ export default function Groups() {
                 if (response.status === 201) {
                     setPopoverContent('Datos guardados correctamente');
                     setPopoverTarget('save');
+                    console.log('Negros de mierda:', data);
                     console.log('Datos enviados exitosamente:', response.data);
                     handleCancel();
                 }
