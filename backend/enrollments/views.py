@@ -27,9 +27,6 @@ class EnrollmentDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = EnrollmentSerializer
 
     def get_permissions(self):
-        if self.request.method in ['DELETE']:
-            # Solo career_admin puede actualizar o eliminar usuarios
-            return [IsCareerAdmin()]
         return [IsAuthenticated()]
 
     def perform_destroy(self, instance):
