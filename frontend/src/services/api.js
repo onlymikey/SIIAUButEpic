@@ -36,6 +36,26 @@ api.interceptors.request.use(async config => {
     return config;
 });
 
+export const getEnrollments = async () => {
+    try {
+        const response = await api.get('/enrollments/');
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener las inscripciones:', error);
+        throw error;
+    }
+};
+
+export const deleteEnrollment = async (id) => {
+    try {
+        const response = await api.delete(`/enrollments/${id}/`);
+        return response.data;
+    } catch (error) {
+        console.error('Error al eliminar la inscripción:', error);
+        throw error;
+    }
+};
+
 export const createEnrollment = async (enrollmentData) => {
     try {
       const response = await api.post('/enrollments/', enrollmentData);
