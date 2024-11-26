@@ -63,10 +63,12 @@ class UserGroupsView(APIView):
         
         response_data = {
             "user_id": user_id,
+            "enrollments": [],
             "groups": []
         }
 
-        for group in groups:
+        for enrollment in enrollments:
+            group = enrollment.group
             # Obtener los horarios relacionados con el grupo
             schedules = Schedule.objects.filter(group=group)
             schedule_data = [
@@ -89,6 +91,12 @@ class UserGroupsView(APIView):
                 "start_date": group.start_date,
                 "end_date": group.end_date,
                 "schedules": schedule_data
+            })
+
+            # Agregar el ID del enrollment al JSON de respuesta
+            response_data["enrollments"].append({
+                "enrollment_id": enrollment.id,
+                "group_id": group.id
             })
 
         return Response(response_data)
