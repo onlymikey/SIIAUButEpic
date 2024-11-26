@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@nextui-org/react";
-import { getGroups, getUserGroups, getSubjectById, getUserById, createEnrollment, deleteEnrollment } from '../services/api'; // Asegúrate de importar las funciones correctas
+import { getGroups, getUserGroups, getSubjectById, getUserById, createEnrollment, deleteEnrollment, getEnrollments } from '../services/api'; // Asegúrate de importar las funciones correctas
 
 const EnrollCourses = () => {
     const [availableGroups, setAvailableGroups] = useState([]);
     const [registeredGroups, setRegisteredGroups] = useState([]);
+    const [enrollments, setEnrollments] = useState([]);
     const userId = localStorage.getItem('userId');
     const [subjects, setSubjects] = useState({});
     const [teachers, setTeachers] = useState({});
@@ -13,10 +14,11 @@ const EnrollCourses = () => {
         try {
             const allGroups = await getGroups();
             const userGroups = await getUserGroups(userId);
-            console.log(allGroups);
+            const allEnrollments = await getEnrollments();
             console.log(userGroups);
 
             setRegisteredGroups(userGroups);
+            setEnrollments(allEnrollments);
 
             const filteredGroups = allGroups.filter(group => 
                 !userGroups.some(userGroup => userGroup.id === group.id)
@@ -75,14 +77,20 @@ const EnrollCourses = () => {
         }
     };
 
-    const cancelarRegistro = async (id) => {
+    const cancelarRegistro = async (materia) => {
         try {
-            await deleteEnrollment(id);
+            const userEnrollments = enrollments.filter(enrollment => enrollment.user === parseInt(userId));
+            const enrollment = userEnrollments.find(enrollment => enrollment.group === materia.id);
+            if (enrollment) {
+                await deleteEnrollment(enrollment.id);
 
-            // Recargar los grupos después de cancelar la inscripción
-            await loadGroups();
+                // Recargar los grupos después de cancelar la inscripción
+                await loadGroups();
 
-            alert('Inscripción cancelada con éxito');
+                alert('Inscripción cancelada con éxito');
+            } else {
+                alert('No se encontró la inscripción para cancelar');
+            }
         } catch (error) {
             console.error('Error al cancelar la inscripción:', error);
             alert('Hubo un error al cancelar la inscripción');
@@ -115,11 +123,11 @@ const EnrollCourses = () => {
                     <tbody>
                         {registeredGroups.map((materia) => (
                             <tr key={materia.id}>
-                                <td className="border border-white px-2 py-1">{subjects[materia.subject]}</td>
+                                <td className="border border-white px-2 py-1">{subjects[materia.id]}</td>
                                 <td className="border border-white px-2 py-1">{materia.id}</td>
                                 <td className="border border-white px-2 py-1">{materia.quantity_students}</td>
                                 <td className="border border-white px-2 py-1">{materia.max_students}</td>
-                                <td className="border border-white px-2 py-1">{teachers[materia.teacher]}</td>
+                                <td className="border border-white px-2 py-1">{teachers[materia.teacher.id]}</td>
                                 <td className="border border-white px-2 py-1">
                                     {materia.schedules.map(schedule => (
                                         <div key={schedule.id}>
@@ -133,7 +141,7 @@ const EnrollCourses = () => {
                                         size="sm"
                                         color="danger"
                                         variant='flat'
-                                        onClick={() => cancelarRegistro(materia.id)}
+                                        onClick={() => cancelarRegistro(materia)}
                                     >
                                         Cancelar
                                     </Button>

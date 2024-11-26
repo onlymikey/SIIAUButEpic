@@ -64,13 +64,14 @@ const DashboardStudents = () => {
                   <th>I</th>
                   <th>J</th>
                   <th>V</th>
+                  <th>S</th>
                 </tr>
               </thead>
               <tbody>
-                {["07:00-09:00", "09:00-11:00", "11:00-13:00", "13:00-15:00"].map((hora) => (
+                {["07:00-09:00", "09:00-11:00", "11:00-13:00", "13:00-15:00","15:00-17:00","17:00-19:00"].map((hora) => (
                   <tr key={hora} className="border-b border-gray-600">
                     <td className="py-2">{hora}</td>
-                    {["lunes", "martes", "miércoles", "jueves", "viernes"].map((day) => (
+                    {["lunes", "martes", "miércoles", "jueves", "viernes", "sábado"].map((day) => (
                       <td key={day}>
                         {schedules
                           .filter(schedule => schedule.day === day && schedule.start_at === hora.split('-')[0])
