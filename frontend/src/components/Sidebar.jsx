@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FaHome, FaUser, FaBook, FaUsers, FaGraduationCap, FaBars, FaPowerOff, FaSchool } from 'react-icons/fa';
+import { FaHome, FaUser, FaBook, FaUsers, FaGraduationCap, FaBars, FaPowerOff, FaSchool, FaClipboardList, FaCalendarAlt } from 'react-icons/fa';
 import { Button } from '@nextui-org/react';
 import Ripples from 'react-ripples';
 import { useNavigate } from 'react-router-dom';
@@ -101,7 +101,7 @@ export default function Sidebar() {
                                 <li className="mx-2 my-1">
                                     <Ripples className="w-full rounded-md" during={600}>
                                         <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'DashboardStudents' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('DashboardStudents')}>
-                                            <FaGraduationCap className="w-5 h-5 mr-3" />
+                                            <FaHome className="w-5 h-5 mr-3" /> 
                                             <span>DashboardStudents</span>
                                         </div>
                                     </Ripples>
@@ -109,7 +109,7 @@ export default function Sidebar() {
                                 <li className="mx-2 my-1">
                                     <Ripples className="w-full rounded-md" during={600}>
                                         <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'AcademicsPrograms' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('AcademicsPrograms')}>
-                                            <FaGraduationCap className="w-5 h-5 mr-3" />
+                                            <FaClipboardList  className="w-5 h-5 mr-3" />
                                             <span>Oferta Academica</span>
                                         </div>
                                     </Ripples>
@@ -117,7 +117,7 @@ export default function Sidebar() {
                                 <li className="mx-2 my-1">
                                     <Ripples className="w-full rounded-md" during={600}>
                                         <div className={`flex items-center w-full h-full rounded-md p-2 transition duration-200 ease-in-out cursor-pointer select-none ${selectedSection === 'EnrollCourses' ? 'bg-gray-700 bg-opacity-50' : 'hover:bg-gray-700 hover:bg-opacity-50'}`} onClick={() => handleSectionClick('EnrollCourses')}>
-                                            <FaGraduationCap className="w-5 h-5 mr-3" />
+                                            <FaCalendarAlt className="w-5 h-5 mr-3" />
                                             <span>Registro de materias</span>
                                         </div>
                                     </Ripples>

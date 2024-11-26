@@ -10,6 +10,7 @@ import {
 } from "react-icons/md";
 import { getUserGroups } from '../services/api';
 
+
 const DashboardStudents = () => {
   const [schedules, setSchedules] = useState([]);
 
@@ -18,7 +19,7 @@ const DashboardStudents = () => {
       try {
         const userId = localStorage.getItem('userId');
         const response = await getUserGroups(userId);
-        const groups = response || [];
+        const groups = response.groups || [];
         const allSchedules = groups.flatMap(group => 
           group.schedules.map(schedule => ({
             ...schedule,
@@ -34,6 +35,8 @@ const DashboardStudents = () => {
     fetchUserGroups();
   }, []);
 
+
+
   return (
     <div className="p-10 max-w-6xl mx-auto bg-gray-900 bg-opacity-90 backdrop-blur-lg rounded-lg">
       {/* Título del Dashboard */}
@@ -42,12 +45,12 @@ const DashboardStudents = () => {
       {/* Bienvenida */}
       <div className="bg-blue-800 text-white p-6 rounded-lg shadow-lg mb-6">
         <h2 className="text-2xl font-semibold text-center">
-          Bienvenido XXXXX (estudiante / profesor)
+          Bienvenido, {localStorage.getItem('user')}!
         </h2>
       </div>
 
       {/* Contenedor de Mi Horario y Avisos */}
-      <div className="grid grid-cols-3 gap-6 mb-6">
+      <div className=" gap-6 mb-6">
         {/* Mi Horario */}
         <div className="col-span-2 bg-gray-800 text-white rounded-lg shadow-lg">
           <div className="flex items-center p-4 border-b border-gray-600">
@@ -59,12 +62,12 @@ const DashboardStudents = () => {
               <thead>
                 <tr className="border-b border-gray-600">
                   <th className="py-2">HORA</th>
-                  <th>L</th>
-                  <th>M</th>
-                  <th>I</th>
-                  <th>J</th>
-                  <th>V</th>
-                  <th>S</th>
+                  <th className="px-8">L</th>
+                  <th className="px-8">M</th>
+                  <th className="px-8">I</th>
+                  <th className="px-8">J</th>
+                  <th className="px-8">V</th>
+                  <th className="px-8">S</th>
                 </tr>
               </thead>
               <tbody>
@@ -87,29 +90,13 @@ const DashboardStudents = () => {
           </div>
         </div>
 
-        {/* Avisos */}
-        <div className="bg-gray-800 text-white rounded-lg shadow-lg">
-          <div className="flex items-center p-4 border-b border-gray-600">
-            <MdNotificationImportant className="text-2xl mr-2" />
-            <h3 className="text-xl font-semibold">Avisos</h3>
-          </div>
-          <div className="p-4">
-            <ul className="list-disc list-inside">
-              <li>AVISO 1</li>
-              <li>AVISO 2</li>
-              <li>AVISO 3</li>
-            </ul>
-          </div>
-        </div>
       </div>
 
       {/* Botones */}
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 gap-6">
         {[
           { label: "Registrar materias", icon: <MdCalendarMonth />, color: "bg-blue-600", path: "/EnrollCourses" },
           { label: "Oferta Académica", icon: <MdAccountBalance />, color: "bg-green-600", path: "/AcademicsPrograms" },
-          { label: "Kardex", icon: <MdInsertDriveFile />, color: "bg-yellow-600", path: "#" },
-          { label: "Cerrar Sesión", icon: <MdLogin />, color: "bg-red-600", path: "#" },
         ].map((button) => (
           <Link key={button.label} to={button.path} className={`p-4 rounded-lg shadow-lg text-white text-center ${button.color}`}>
             <div className="text-2xl mb-2">{button.icon}</div>

@@ -1,59 +1,57 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@nextui-org/react";
-import { getGroups, getUserGroups, getSubjectById, getUserById, createEnrollment, deleteEnrollment, getEnrollments } from '../services/api'; // Asegúrate de importar las funciones correctas
+import { getGroups, getUserGroups, getSubjectById, getUserById, createEnrollment, deleteEnrollment } from '../services/api'; // Asegúrate de importar las funciones correctas
 
 const EnrollCourses = () => {
     const [availableGroups, setAvailableGroups] = useState([]);
     const [registeredGroups, setRegisteredGroups] = useState([]);
-    const [enrollments, setEnrollments] = useState([]);
     const userId = localStorage.getItem('userId');
     const [subjects, setSubjects] = useState({});
     const [teachers, setTeachers] = useState({});
 
     const loadGroups = async () => {
-        try {
-            const allGroups = await getGroups();
-            const userGroups = await getUserGroups(userId);
-            const allEnrollments = await getEnrollments();
-            console.log(userGroups);
-
-            setRegisteredGroups(userGroups);
-            setEnrollments(allEnrollments);
-
-            const filteredGroups = allGroups.filter(group => 
-                !userGroups.some(userGroup => userGroup.id === group.id)
-            );
-
-            setAvailableGroups(filteredGroups);
-
-            // Fetch teacher names
-            const teacherIds = new Set(allGroups.map(group => group.teacher));
-            const teacherPromises = Array.from(teacherIds).map(id => getUserById(id));
-            const teacherResults = await Promise.all(teacherPromises);
-
-            const teacherMap = {};
-            teacherResults.forEach(teacher => {
-                teacherMap[teacher.id] = teacher.name;
-            });
-
-            setTeachers(teacherMap);
-
-            // Fetch subject names
-            const subjectIds = new Set(allGroups.map(group => group.subject));
-            const subjectPromises = Array.from(subjectIds).map(id => getSubjectById(id));
-            const subjectResults = await Promise.all(subjectPromises);
-
-            const subjectMap = {};
-            subjectResults.forEach(subject => {
-                subjectMap[subject.id] = subject.name;
-            });
-
-            setSubjects(subjectMap);
-
-        } catch (error) {
-            console.error('Error fetching groups:', error);
-        }
-    };
+      try {
+          const allGroups = await getGroups();
+          const userGroupsResponse = await getUserGroups(userId);
+          const userGroups = userGroupsResponse.groups;
+          const enrollments = userGroupsResponse.enrollments;
+  
+          setRegisteredGroups(userGroups);
+  
+          const filteredGroups = allGroups.filter(group => 
+              !enrollments.some(enrollment => enrollment.group_id === group.id)
+          );
+  
+          setAvailableGroups(filteredGroups);
+  
+          // Fetch teacher names
+          const teacherIds = new Set(allGroups.map(group => group.teacher));
+          const teacherPromises = Array.from(teacherIds).map(id => getUserById(id));
+          const teacherResults = await Promise.all(teacherPromises);
+  
+          const teacherMap = {};
+          teacherResults.forEach(teacher => {
+              teacherMap[teacher.id] = teacher.name;
+          });
+  
+          setTeachers(teacherMap);
+  
+          // Fetch subject names
+          const subjectIds = new Set(allGroups.map(group => group.subject));
+          const subjectPromises = Array.from(subjectIds).map(id => getSubjectById(id));
+          const subjectResults = await Promise.all(subjectPromises);
+  
+          const subjectMap = {};
+          subjectResults.forEach(subject => {
+              subjectMap[subject.id] = subject.name;
+          });
+  
+          setSubjects(subjectMap);
+  
+      } catch (error) {
+          console.error('Error fetching groups:', error);
+      }
+  };
 
     useEffect(() => {
         loadGroups();
@@ -61,6 +59,13 @@ const EnrollCourses = () => {
 
     const guardarRegistro = async (materia) => {
         try {
+            // Check if the subject is already registered
+            const isSubjectRegistered = registeredGroups.some(group => group.subject.id === materia.subject);
+            if (isSubjectRegistered) {
+                alert('Ya estás registrado en un grupo con la misma materia');
+                return;
+            }
+
             const enrollmentData = {
                 user: userId,
                 group: materia.id
@@ -76,26 +81,31 @@ const EnrollCourses = () => {
             alert('Hubo un error al guardar la inscripción');
         }
     };
-
+    
     const cancelarRegistro = async (materia) => {
-        try {
-            const userEnrollments = enrollments.filter(enrollment => enrollment.user === parseInt(userId));
-            const enrollment = userEnrollments.find(enrollment => enrollment.group === materia.id);
-            if (enrollment) {
-                await deleteEnrollment(enrollment.id);
-
-                // Recargar los grupos después de cancelar la inscripción
-                await loadGroups();
-
-                alert('Inscripción cancelada con éxito');
-            } else {
-                alert('No se encontró la inscripción para cancelar');
-            }
-        } catch (error) {
-            console.error('Error al cancelar la inscripción:', error);
-            alert('Hubo un error al cancelar la inscripción');
-        }
-    };
+      try {
+          const enrollment = registeredGroups.find(group => group.id === materia.id);
+          if (enrollment) {
+              const enrollmentData = await getUserGroups(userId);
+              const enrollmentRecord = enrollmentData.enrollments.find(enroll => enroll.group_id === materia.id);
+              if (enrollmentRecord) {
+                  await deleteEnrollment(enrollmentRecord.enrollment_id);
+  
+                  // Recargar los grupos después de cancelar la inscripción
+                  await loadGroups();
+  
+                  alert('Inscripción cancelada con éxito');
+              } else {
+                  alert('No se encontró la inscripción para cancelar');
+              }
+          } else {
+              alert('No se encontró la inscripción para cancelar');
+          }
+      } catch (error) {
+          console.error('Error al cancelar la inscripción:', error);
+          alert('Hubo un error al cancelar la inscripción');
+      }
+  };
 
     return (
         <div className="p-10 max-w-6xl mx-auto bg-gray-900 bg-opacity-90 backdrop-blur-lg rounded-lg">
@@ -123,7 +133,7 @@ const EnrollCourses = () => {
                     <tbody>
                         {registeredGroups.map((materia) => (
                             <tr key={materia.id}>
-                                <td className="border border-white px-2 py-1">{subjects[materia.id]}</td>
+                                <td className="border border-white px-2 py-1">{subjects[materia.subject.id]}</td>
                                 <td className="border border-white px-2 py-1">{materia.id}</td>
                                 <td className="border border-white px-2 py-1">{materia.quantity_students}</td>
                                 <td className="border border-white px-2 py-1">{materia.max_students}</td>

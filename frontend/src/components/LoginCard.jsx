@@ -51,6 +51,7 @@ export default function LoginCard({ setUserRole }) {
                 localStorage.setItem('tokenExpiration', tokenExpirationDate.toISOString());
                 localStorage.setItem('userRole', user.role);
                 localStorage.setItem('userId', user.id);
+                localStorage.setItem('user', user.username);
 
                 // Actualizar el estado de userRole en App
                 setUserRole(user.role);
