@@ -58,9 +58,10 @@ class EnrollmentNextIdView(APIView):
     
 class UserGroupsView(APIView):
     def get(self, request, user_id, *args, **kwargs):
+        # Filtrar las inscripciones del usuario por su ID
         enrollments = Enrollment.objects.filter(user__id=user_id)
         groups = [enrollment.group for enrollment in enrollments]
-        
+
         response_data = {
             "user_id": user_id,
             "groups": []
@@ -82,12 +83,28 @@ class UserGroupsView(APIView):
                 for schedule in schedules
             ]
 
-            # Agregar los datos del grupo y su horario al JSON de respuesta
+            # Obtener datos de la materia relacionada con el grupo
+            subject = group.subject
+
+            # Agregar los datos del grupo, horarios y materia al JSON de respuesta
             response_data["groups"].append({
                 "id": group.id,
                 "name": group.name,
                 "start_date": group.start_date,
                 "end_date": group.end_date,
+                "study_period": group.study_period,
+                "quantity_students": group.quantity_students,
+                "max_students": group.max_students,
+                "teacher": {
+                    "id": group.teacher.id,
+                    "name": group.teacher.get_full_name(),  # Supone que `CustomUser` tiene este método
+                    "email": group.teacher.email
+                },
+                "subject": {
+                    "id": subject.id,
+                    "name": subject.name,
+                    "code": subject.code  # Supone que el modelo Subject tiene un campo `code`
+                },
                 "schedules": schedule_data
             })
 
