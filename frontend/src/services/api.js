@@ -36,6 +36,26 @@ api.interceptors.request.use(async config => {
     return config;
 });
 
+export const createEnrollment = async (enrollmentData) => {
+    try {
+      const response = await api.post('/enrollments/', enrollmentData);
+      return response.data;
+    } catch (error) {
+      console.error('Error al crear la inscripción:', error);
+      throw error;
+    }
+  };
+
+export const getGroups = async () => {
+    try {
+        const response = await api.get('/groups/');
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener los grupos:', error);
+        throw error;
+    }
+};
+
 export const getUserGroups = async (userId) => {
     try {
         const response = await api.get(`/enrollments/user/${userId}/`);
