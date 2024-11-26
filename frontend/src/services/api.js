@@ -59,7 +59,7 @@ export const getGroups = async () => {
 export const getUserGroups = async (userId) => {
     try {
         const response = await api.get(`/enrollments/user/${userId}/`);
-        return response.data;
+        return response.data.groups;
     } catch (error) {
         console.error('Error al obtener los grupos del usuario:', error);
         throw error;

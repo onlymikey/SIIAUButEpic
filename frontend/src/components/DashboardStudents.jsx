@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import {
-  MdCalendarMonth,
   MdCalendarToday,
+  MdCalendarMonth,
   MdAccountBalance,
   MdInsertDriveFile,
   MdLogin,
@@ -16,7 +16,7 @@ const DashboardStudents = () => {
   useEffect(() => {
     const fetchUserGroups = async () => {
       try {
-        const userId = localStorage.getItem('userId'); // Asegúrate de tener el userId almacenado en localStorage
+        const userId = localStorage.getItem('userId');
         const groups = await getUserGroups(userId);
         const allSchedules = groups.flatMap(group => group.schedules);
         setSchedules(allSchedules);
@@ -31,9 +31,7 @@ const DashboardStudents = () => {
   return (
     <div className="p-10 max-w-6xl mx-auto bg-gray-900 bg-opacity-90 backdrop-blur-lg rounded-lg">
       {/* Título del Dashboard */}
-      <h1 className="text-white font-bold text-4xl text-center mb-6">
-        Dashboard
-      </h1>
+      <h1 className="text-white font-bold text-4xl text-center mb-6">Dashboard</h1>
 
       {/* Bienvenida */}
       <div className="bg-blue-800 text-white p-6 rounded-lg shadow-lg mb-6">
@@ -66,14 +64,12 @@ const DashboardStudents = () => {
                 {["07:00-09:00", "09:00-11:00", "11:00-13:00", "13:00-15:00"].map((hora) => (
                   <tr key={hora} className="border-b border-gray-600">
                     <td className="py-2">{hora}</td>
-                    {["L", "M", "I", "J", "V"].map((day) => (
+                    {["lunes", "martes", "miércoles", "jueves", "viernes"].map((day) => (
                       <td key={day}>
                         {schedules
                           .filter(schedule => schedule.day === day && schedule.start_at === hora.split('-')[0])
                           .map(schedule => (
-                            <div key={schedule.id}>
-                              {schedule.classroom.name}
-                            </div>
+                            <div key={schedule.id}>{schedule.classroom.name}</div>
                           ))}
                       </td>
                     ))}
@@ -123,3 +119,4 @@ const DashboardStudents = () => {
 };
 
 export default DashboardStudents;
+

@@ -50,6 +50,7 @@ export default function LoginCard() {
                 localStorage.setItem('refreshToken', refresh);
                 localStorage.setItem('tokenExpiration', tokenExpirationDate.toISOString());
                 localStorage.setItem('userRole', user.role);
+                localStorage.setItem('userId', user.id);
 
                 // Redirigir al dashboard
                 navigate('/dashboard');
