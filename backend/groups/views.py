@@ -18,6 +18,8 @@ from rest_framework.permissions import IsAuthenticated
 
 # Vista para listar todos los grupos (solo GET)
 class GroupListView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         try:
             # Prefetch schedules relacionados para optimizar consultas
@@ -39,9 +41,8 @@ class GroupListView(APIView):
         
 # Vista para obtener un grupo específico con sus horarios relacionados
 class GroupDetailWithSchedulesView(APIView):
-    """
-    Vista para obtener un grupo específico con sus horarios relacionados.
-    """
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, group_id, *args, **kwargs):
         # Obtén el grupo por su ID o devuelve 404 si no existe
         group = get_object_or_404(Group, id=group_id)
@@ -60,9 +61,8 @@ class GroupDetailWithSchedulesView(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
     
 class GroupDeleteView(APIView):
-    """
-    Vista para eliminar un grupo y sus horarios relacionados.
-    """
+    permission_classes = [IsAuthenticated]
+
     def delete(self, request, group_id, *args, **kwargs):
         # Obtén el grupo por su ID o devuelve 404 si no existe
         group = get_object_or_404(Group, id=group_id)
@@ -87,9 +87,7 @@ class GroupDeleteView(APIView):
         
 # Vista para actualizar un grupo y sus horarios relacionados
 class GroupUpdateView(APIView):
-    """
-    Vista para actualizar un grupo y sus horarios relacionados.
-    """
+    permission_classes = [IsAuthenticated]
 
     def put(self, request, group_id, *args, **kwargs):
         return self.update_group(request, group_id, partial=False)
@@ -147,6 +145,8 @@ class GroupUpdateView(APIView):
 
 # Vista para obtener el próximo ID de la tabla groups_group
 class GroupNextIdView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, *args, **kwargs):
         next_id = self.get_next_auto_increment_id('groups_group')
         return Response({'next_id': next_id})
@@ -165,6 +165,8 @@ class GroupNextIdView(APIView):
 
 # Vista para crear un grupo con sus horarios
 class GroupCreateView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, *args, **kwargs):
         data = request.data
 
@@ -185,7 +187,7 @@ class GroupCreateView(APIView):
                         if schedule_serializer.is_valid():
                             schedules.append(schedule_serializer.save())
                         else:
-                            raise DRFValidationError(schedule_serializer.errors)
+                            raise DjangoValidationError(schedule_serializer.errors)
 
                 if schedules:
                     return Response({
