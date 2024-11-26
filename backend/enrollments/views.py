@@ -103,7 +103,9 @@ class UserGroupsView(APIView):
                 "subject": {
                     "id": subject.id,
                     "name": subject.name,
-                    "code": subject.code  # Supone que el modelo Subject tiene un campo `code`
+                    "career": subject.career,
+                    "credits": subject.credits,
+                    "semester": subject.semester
                 },
                 "schedules": schedule_data
             })
