@@ -1,26 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@nextui-org/react";
+import { getGroups, getSubjectById, getUserById, createEnrollment } from '../services/api'; // Asegúrate de importar las funciones correctas
 
-const RegistrarMaterias = () => {
+const EnrollCourses = () => {
   const [materiasRegistradas, setMateriasRegistradas] = useState([]);
-  const [materiasDisponibles, setMateriasDisponibles] = useState([
-    { id: 1, materia: "Matemáticas", clave: "MAT101", cupos: 3, profesor: "Prof. Pérez", horario: "07:00-09:00", aula: "A1" },
-    { id: 2, materia: "Física", clave: "FIS102", cupos: 2, profesor: "Prof. López", horario: "11:00-13:00", aula: "B2" },
-    { id: 3, materia: "Química", clave: "QUI103", cupos: 2, profesor: "Prof. Ramírez", horario: "13:00-15:00", aula: "C3" },
-  ]);
+  const [materiasDisponibles, setMateriasDisponibles] = useState([]);
+  const [subjects, setSubjects] = useState({});
+  const [teachers, setTeachers] = useState({});
+  const currentUser = { id: localStorage.getItem('userId') }; // Obtener el ID del usuario desde el localStorage
 
-  // Mover de disponibles a registradas
+  useEffect(() => {
+    const fetchMateriasDisponibles = async () => {
+      try {
+        const data = await getGroups();
+        setMateriasDisponibles(data);
+
+        // Obtener detalles de materias y profesores
+        const subjectPromises = data.map(group => getSubjectById(group.subject));
+        const teacherPromises = data.map(group => getUserById(group.teacher));
+
+        const subjectsData = await Promise.all(subjectPromises);
+        const teachersData = await Promise.all(teacherPromises);
+
+        const subjectsMap = {};
+        const teachersMap = {};
+
+        subjectsData.forEach(subject => {
+          subjectsMap[subject.id] = subject.name;
+        });
+
+        teachersData.forEach(teacher => {
+          teachersMap[teacher.id] = `${teacher.name} ${teacher.father_last_name} ${teacher.mother_last_name}`;
+        });
+
+        setSubjects(subjectsMap);
+        setTeachers(teachersMap);
+      } catch (error) {
+        console.error('Error al obtener las materias disponibles:', error);
+      }
+    };
+
+    fetchMateriasDisponibles();
+  }, []);
+
   const registrarMateria = (id) => {
     const materia = materiasDisponibles.find((m) => m.id === id);
     setMateriasRegistradas([...materiasRegistradas, materia]);
     setMateriasDisponibles(materiasDisponibles.filter((m) => m.id !== id));
   };
 
-  // Mover de registradas a disponibles
   const cancelarRegistro = (id) => {
     const materia = materiasRegistradas.find((m) => m.id === id);
     setMateriasDisponibles([...materiasDisponibles, materia]);
     setMateriasRegistradas(materiasRegistradas.filter((m) => m.id !== id));
+  };
+
+  const guardarRegistros = async () => {
+    try {
+      const enrollmentPromises = materiasRegistradas.map(materia => {
+        const enrollmentData = {
+          user: currentUser.id,
+          group: materia.id
+        };
+        return createEnrollment(enrollmentData);
+      });
+  
+      await Promise.all(enrollmentPromises);
+      alert('Inscripciones guardadas con éxito');
+    } catch (error) {
+      console.error('Error al guardar las inscripciones:', error);
+      alert('Hubo un error al guardar las inscripciones');
+    }
   };
 
   return (
@@ -32,15 +82,16 @@ const RegistrarMaterias = () => {
         <div className="flex items-center mb-4">
           <span className="text-2xl mr-3">🚩</span>
           <h3 className="text-xl font-bold">Materias registradas:</h3>
-          <Button color="danger" variant='flat' className="ml-20">Cancelar Registros</Button>
-          <Button color="success" variant='flat' className="ml-4">Guardar Registros</Button>
+          <Button color="danger" variant='flat' className="ml-20" onClick={() => setMateriasRegistradas([])}>Cancelar Registros</Button>
+          <Button color="success" variant='flat' className="ml-4" onClick={guardarRegistros}>Guardar Registros</Button>
         </div>
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr>
               <th className="border border-white px-2 py-1">MATERIA</th>
               <th className="border border-white px-2 py-1">CLAVE</th>
-              <th className="border border-white px-2 py-1">CUPOS</th>
+              <th className="border border-white px-2 py-1">Alumnos registrados</th>
+              <th className="border border-white px-2 py-1">Max alumnos</th>
               <th className="border border-white px-2 py-1">PROFESOR</th>
               <th className="border border-white px-2 py-1">HORARIO</th>
               <th className="border border-white px-2 py-1">AULA</th>
@@ -50,12 +101,19 @@ const RegistrarMaterias = () => {
           <tbody>
             {materiasRegistradas.map((materia) => (
               <tr key={materia.id}>
-                <td className="border border-white px-2 py-1">{materia.materia}</td>
-                <td className="border border-white px-2 py-1">{materia.clave}</td>
-                <td className="border border-white px-2 py-1">{materia.cupos}</td>
-                <td className="border border-white px-2 py-1">{materia.profesor}</td>
-                <td className="border border-white px-2 py-1">{materia.horario}</td>
-                <td className="border border-white px-2 py-1">{materia.aula}</td>
+                <td className="border border-white px-2 py-1">{subjects[materia.subject]}</td>
+                <td className="border border-white px-2 py-1">{materia.id}</td>
+                <td className="border border-white px-2 py-1">{materia.quantity_students}</td>
+                <td className="border border-white px-2 py-1">{materia.max_students}</td>
+                <td className="border border-white px-2 py-1">{teachers[materia.teacher]}</td>
+                <td className="border border-white px-2 py-1">
+                  {materia.schedules.map(schedule => (
+                    <div key={schedule.id}>
+                      {schedule.day} {schedule.start_at} - {schedule.end_at}
+                    </div>
+                  ))}
+                </td>
+                <td className="border border-white px-2 py-1">{materia.name}</td>
                 <td className="border border-white px-2 py-1">
                   <Button
                     size="sm"
@@ -83,7 +141,8 @@ const RegistrarMaterias = () => {
             <tr>
               <th className="border border-white px-2 py-1">MATERIA</th>
               <th className="border border-white px-2 py-1">CLAVE</th>
-              <th className="border border-white px-2 py-1">CUPOS</th>
+              <th className="border border-white px-2 py-1">Alumnos registrados</th>
+              <th className="border border-white px-2 py-1">Max alumnos</th>
               <th className="border border-white px-2 py-1">PROFESOR</th>
               <th className="border border-white px-2 py-1">HORARIO</th>
               <th className="border border-white px-2 py-1">AULA</th>
@@ -93,20 +152,27 @@ const RegistrarMaterias = () => {
           <tbody>
             {materiasDisponibles.map((materia) => (
               <tr key={materia.id}>
-                <td className="border border-white px-2 py-1">{materia.materia}</td>
-                <td className="border border-white px-2 py-1">{materia.clave}</td>
-                <td className="border border-white px-2 py-1">{materia.cupos}</td>
-                <td className="border border-white px-2 py-1">{materia.profesor}</td>
-                <td className="border border-white px-2 py-1">{materia.horario}</td>
-                <td className="border border-white px-2 py-1">{materia.aula}</td>
+                <td className="border border-white px-2 py-1">{subjects[materia.subject]}</td>
+                <td className="border border-white px-2 py-1">{materia.id}</td>
+                <td className="border border-white px-2 py-1">{materia.quantity_students}</td>
+                <td className="border border-white px-2 py-1">{materia.max_students}</td>
+                <td className="border border-white px-2 py-1">{teachers[materia.teacher]}</td>
+                <td className="border border-white px-2 py-1">
+                  {materia.schedules.map(schedule => (
+                    <div key={schedule.id}>
+                      {schedule.day} {schedule.start_at} - {schedule.end_at}
+                    </div>
+                  ))}
+                </td>
+                <td className="border border-white px-2 py-1">{materia.name}</td>
                 <td className="border border-white px-2 py-1">
                   <Button
                     size="sm"
-                    color="success"
+                    color="primary"
                     variant='flat'
                     onClick={() => registrarMateria(materia.id)}
                   >
-                    Registrar
+                    Inscribirse
                   </Button>
                 </td>
               </tr>
@@ -118,4 +184,4 @@ const RegistrarMaterias = () => {
   );
 };
 
-export default RegistrarMaterias;
+export default EnrollCourses;
